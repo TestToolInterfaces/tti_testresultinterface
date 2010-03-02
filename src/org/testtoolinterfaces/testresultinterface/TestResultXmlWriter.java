@@ -15,13 +15,13 @@ import org.testtoolinterfaces.utils.Trace;
 public abstract class TestResultXmlWriter
 {
 	private TestResult myResult;
-	private int myIndentLevel = 0;
+//	private int myIndentLevel = 0;
 	
 	public TestResultXmlWriter( TestResult aResult, int anIndentLevel )
 	{
 	    Trace.println(Trace.CONSTRUCTOR);
 		myResult = aResult;
-		myIndentLevel = anIndentLevel;
+//		myIndentLevel = anIndentLevel;
 	}
 
 	/**
