@@ -5,6 +5,7 @@ package org.testtoolinterfaces.testresultinterface;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -19,14 +20,18 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class TestCaseResultXmlWriter extends TestResultXmlWriter
 {
-
+	TestStepResultXmlWriter myTsResultWriter;
+	
 	/**
 	 * @param aTestCaseName
 	 */
-	public TestCaseResultXmlWriter(TestCaseResult aResult, int anIndentLevel)
+	public TestCaseResultXmlWriter(TestCaseResult aResult, File aBaseLogDir, int anIndentLevel)
 	{
-		super(aResult, anIndentLevel);
+		super(aResult, aBaseLogDir, anIndentLevel);
 		Trace.println(Trace.CONSTRUCTOR);
+		
+//		myTsResultWriter = new TestStepResultXmlWriter( aBaseLogDir, anIndentLevel+1 );
+
 	}
 
 	/**
@@ -55,7 +60,7 @@ public class TestCaseResultXmlWriter extends TestResultXmlWriter
 		Hashtable<Integer, TestStepResult> initializationResults = result.getInitializationResults();
     	for (int key = 0; key < initializationResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( initializationResults.get(key), 0 );
+    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( initializationResults.get(key), getBaseLogDir(), 0 );
     		tsResultWriter.printXml(aStream);
     	}
 
@@ -63,7 +68,7 @@ public class TestCaseResultXmlWriter extends TestResultXmlWriter
 		Hashtable<Integer, TestStepResult> executionResults = result.getExecutionResults();
     	for (int key = 0; key < initializationResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( executionResults.get(key), 0 );
+    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( executionResults.get(key), getBaseLogDir(), 0 );
     		tsResultWriter.printXml(aStream);
     	}
 		aStream.write("        </execution>\n");
@@ -71,7 +76,7 @@ public class TestCaseResultXmlWriter extends TestResultXmlWriter
 		Hashtable<Integer, TestStepResult> restoreResults = result.getRestoreResults();
     	for (int key = 0; key < restoreResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( restoreResults.get(key), 0 );
+    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( restoreResults.get(key), getBaseLogDir(), 0 );
     		tsResultWriter.printXml(aStream);
     	}
 

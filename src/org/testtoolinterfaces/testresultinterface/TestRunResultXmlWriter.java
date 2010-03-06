@@ -28,6 +28,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	File myXslSourceDir = null;
 	String myTestEnvironment = "Unknown";
 	String myTestPhase = "Unknown";
+	File myBaseLogDir = new File( "" );
 
 	/**
 	 * 
@@ -90,6 +91,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
         	logDir.mkdir();
         }
 		copyXsl( logDir );
+		myBaseLogDir = logDir;
 		
 		FileWriter xmlFile;
 		try
@@ -149,7 +151,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		// System Under Test
 	    printXmlSut( aRunResult, aStream );
 	    
-		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( aRunResult.getTestGroup(), 0 );
+		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( aRunResult.getTestGroup(), myBaseLogDir, 0 );
 		tgResultWriter.printXml(aStream);
 	    
 	    aStream.write("</testrun>\n");
@@ -199,9 +201,20 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		    for (Enumeration<String> keys = aLogs.keys(); keys.hasMoreElements();)
 		    {
 		    	String key = keys.nextElement();
+		    	String logFile = (new File(aLogs.get(key))).getCanonicalPath();
+		    	String baseLogDir = myBaseLogDir.getCanonicalPath();
+		    	if ( logFile.startsWith(baseLogDir) )
+		    	{
+		    		logFile = logFile.substring(baseLogDir.length());
+			    	if ( logFile.startsWith(File.separator) )
+			    	{
+			    		logFile = logFile.substring(File.separator.length());
+			    	}
+		    	}
+	    		logFile = logFile.replace('\\', '/');
 		    	aStream.write("          <logFile");
 		    	aStream.write(" type='" + key + "'");
-		    	aStream.write(">" + aLogs.get(key));
+		    	aStream.write(">" + logFile);
 		    	aStream.write("</logFile>\n");
 		    }
   

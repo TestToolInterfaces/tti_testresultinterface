@@ -3,6 +3,7 @@
  */
 package org.testtoolinterfaces.testresultinterface;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public class TestStepResultXmlWriter extends TestResultXmlWriter
 	 * @param aResult
 	 * @param anIndentLevel
 	 */
-	public TestStepResultXmlWriter(TestStepResult aResult, int anIndentLevel)
+	public TestStepResultXmlWriter(TestStepResult aResult, File aBaseLogDir, int anIndentLevel)
 	{
-		super(aResult, anIndentLevel);
+		super(aResult, aBaseLogDir, anIndentLevel);
 		Trace.println(Trace.LEVEL.CONSTRUCTOR);
 	}
 

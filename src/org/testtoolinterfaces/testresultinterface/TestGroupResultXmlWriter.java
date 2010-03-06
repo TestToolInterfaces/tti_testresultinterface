@@ -4,6 +4,7 @@
 package org.testtoolinterfaces.testresultinterface;
 
 import java.util.Hashtable;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -21,9 +22,9 @@ public class TestGroupResultXmlWriter extends TestResultXmlWriter
     /**
 	 * @param aTestGroupName
 	 */
-	public TestGroupResultXmlWriter(TestGroupResult aTestGroupResult, int anIndentLevel)
+	public TestGroupResultXmlWriter(TestGroupResult aTestGroupResult, File aBaseLogDir, int anIndentLevel)
 	{
-		super( aTestGroupResult, anIndentLevel );
+		super( aTestGroupResult, aBaseLogDir, anIndentLevel );
 		Trace.println(Trace.CONSTRUCTOR);
 	}
 
@@ -44,7 +45,7 @@ public class TestGroupResultXmlWriter extends TestResultXmlWriter
 		Hashtable<Integer, TestGroupResult> tgResults = result.getTestGroupResults();
     	for (int key = 0; key < tgResults.size(); key++)
     	{
-    		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( tgResults.get(key), 0 );
+    		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( tgResults.get(key), getBaseLogDir(), 0 );
     		tgResultWriter.printXml(aStream);
     	}
 
@@ -52,7 +53,7 @@ public class TestGroupResultXmlWriter extends TestResultXmlWriter
 		Hashtable<Integer, TestCaseResult> tcResults = result.getTestCaseResults();
     	for (int key = 0; key < tcResults.size(); key++)
     	{
-    		TestCaseResultXmlWriter tcResultWriter = new TestCaseResultXmlWriter( tcResults.get(key), 0 );
+    		TestCaseResultXmlWriter tcResultWriter = new TestCaseResultXmlWriter( tcResults.get(key), getBaseLogDir(), 0 );
     		tcResultWriter.printXml(aStream);
     	}
 

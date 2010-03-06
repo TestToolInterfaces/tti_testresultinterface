@@ -3,6 +3,7 @@
  */
 package org.testtoolinterfaces.testresultinterface;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
@@ -11,17 +12,27 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.TestResult;
 
 import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Warning;
 
 public abstract class TestResultXmlWriter
 {
 	private TestResult myResult;
 //	private int myIndentLevel = 0;
+	private String myBaseLogDir = "";
 	
-	public TestResultXmlWriter( TestResult aResult, int anIndentLevel )
+	public TestResultXmlWriter( TestResult aResult, File aBaseLogDir, int anIndentLevel )
 	{
 	    Trace.println(Trace.CONSTRUCTOR);
 		myResult = aResult;
 //		myIndentLevel = anIndentLevel;
+		try
+		{
+			myBaseLogDir = aBaseLogDir.getCanonicalPath();
+		}
+		catch (IOException e)
+		{
+			Warning.println( "Cannot relate logfiles to base logdir. Using full path-names" );
+		}
 	}
 
 	/**
@@ -43,9 +54,19 @@ public abstract class TestResultXmlWriter
 		    for (Enumeration<String> keys = logs.keys(); keys.hasMoreElements();)
 		    {
 		    	String key = keys.nextElement();
+		    	String logFile = (new File(logs.get(key))).getCanonicalPath();
+		    	if ( logFile.startsWith(myBaseLogDir) )
+		    	{
+		    		logFile = logFile.substring(myBaseLogDir.length());
+			    	if ( logFile.startsWith(File.separator) )
+			    	{
+			    		logFile = logFile.substring(File.separator.length());
+			    	}
+		    	}
+	    		logFile = logFile.replace('\\', '/');
 		    	aStream.write("          <logFile");
 		    	aStream.write(" type='" + key + "'");
-		    	aStream.write(">" + logs.get(key));
+		    	aStream.write(">" + logFile);
 		    	aStream.write("</logFile>\n");
 		    }
   
@@ -87,5 +108,13 @@ public abstract class TestResultXmlWriter
 	protected TestResult getResult()
 	{
 		return myResult;
+	}
+
+	/**
+	 * @return the Base Log Dir
+	 */
+	protected File getBaseLogDir()
+	{
+		return new File(myBaseLogDir);
 	}
 }
