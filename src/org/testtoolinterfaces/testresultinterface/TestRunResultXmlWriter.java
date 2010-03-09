@@ -25,25 +25,22 @@ import org.testtoolinterfaces.utils.Warning;
  */
 public class TestRunResultXmlWriter implements TestRunResultWriter
 {
-	File myXslSourceDir = null;
-	String myTestEnvironment = "Unknown";
-	String myTestPhase = "Unknown";
-	File myBaseLogDir = new File( "" );
+	private String myTestEnvironment = "Unknown";
+	private String myTestPhase = "Unknown";
+	private File myBaseLogDir = new File( "" );
+	
+	private File myFileName;
+	private TestGroupResultXmlWriter myTgResultWriter;
 
 	/**
 	 * 
 	 */
-	public TestRunResultXmlWriter()
+	public TestRunResultXmlWriter( File aFileName,
+								   File anXslSourceDir,
+								   String anEnvironment,
+								   String aTestPhase )
 	{
-	}
-
-	/**
-	 * @param anXslSourceDir the directory containing the XSL file, stylesheets, etc.
-	 * @param anEnvironment the environment where the test is executed.
-	 * All these files may be needed for the presentation of the test results.
-	 */
-	public TestRunResultXmlWriter(File anXslSourceDir, String anEnvironment, String aTestPhase)
-	{
+	    Trace.println(Trace.CONSTRUCTOR, "TestRunResultXmlWriter( " + aFileName.getName() + " )", true);
 		if (anXslSourceDir == null)
 		{
 			throw new Error( "No directory specified." );
@@ -54,51 +51,32 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 			throw new Error( "Not a directory: " + anXslSourceDir.getAbsolutePath() );
 		}
 
-		myXslSourceDir = anXslSourceDir;
+		myFileName = aFileName;
 		myTestEnvironment = anEnvironment;
 		myTestPhase = aTestPhase;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#printXml()
-	 */
-	public void print( TestRunResult aRunResult )
-	{
-		OutputStreamWriter stdOutWriter = new OutputStreamWriter( System.out );
-		
-		try
-		{
-			printXmlHeader( aRunResult, stdOutWriter, "STDOUT" );
-			printXmlTestRuns( aRunResult, stdOutWriter );
-			
-			stdOutWriter.flush();
-		}
-		catch (IOException e)
-		{
-			Warning.println("Printing XML failed: " + e.getMessage());
-			Trace.print(Trace.LEVEL.SUITE, e);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#writeXmlFile(java.io.File)
-	 */
-	public void writeToFile ( TestRunResult aRunResult, File aFileName )
-	{
 		File logDir = aFileName.getParentFile();
         if (!logDir.exists())
         {
         	logDir.mkdir();
         }
-		copyXsl( logDir );
+		copyXsl( anXslSourceDir, logDir );
 		myBaseLogDir = logDir;
-		
+
+		myTgResultWriter = new TestGroupResultXmlWriter( myBaseLogDir, 1 );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
+	 */
+	public void write(TestRunResult aRunResult )
+	{
 		FileWriter xmlFile;
 		try
 		{
-			xmlFile = new FileWriter( aFileName );
+			xmlFile = new FileWriter( myFileName );
 
-			printXmlHeader( aRunResult, xmlFile, aFileName.getName() );
+			printXmlHeader( aRunResult, xmlFile, myFileName.getName() );
 			printXmlTestRuns( aRunResult, xmlFile );
 			
 			xmlFile.flush();
@@ -108,9 +86,8 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 			Warning.println("Saving XML failed: " + e.getMessage());
 			Trace.print(Trace.LEVEL.SUITE, e);
 		}
-		
 	}
-	
+
 	/**
 	 * @param aFile
 	 * @throws IOException
@@ -151,8 +128,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		// System Under Test
 	    printXmlSut( aRunResult, aStream );
 	    
-		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( aRunResult.getTestGroup(), myBaseLogDir, 0 );
-		tgResultWriter.printXml(aStream);
+		myTgResultWriter.printXml(aRunResult.getTestGroup(), aStream);
 	    
 	    aStream.write("</testrun>\n");
 	}
@@ -222,15 +198,15 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
       	}
 	}
 
-	private void copyXsl(File aTargetLogDir)
+	private void copyXsl(File aSourceDir, File aTargetLogDir)
 	{
 	    Trace.println(Trace.LEVEL.UTIL, "copyXsl( " + aTargetLogDir.getName() + " )", true);
-		if ( myXslSourceDir == null )
+		if ( aSourceDir == null )
 		{
 			return;
 		}
 		
-        File[] files = myXslSourceDir.listFiles();
+        File[] files = aSourceDir.listFiles();
         for (int i=0; i<files.length; i++)
         {
         	File srcFile = files[i];

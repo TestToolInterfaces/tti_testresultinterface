@@ -25,65 +25,62 @@ public class TestCaseResultXmlWriter extends TestResultXmlWriter
 	/**
 	 * @param aTestCaseName
 	 */
-	public TestCaseResultXmlWriter(TestCaseResult aResult, File aBaseLogDir, int anIndentLevel)
+	public TestCaseResultXmlWriter(File aBaseLogDir, int anIndentLevel)
 	{
-		super(aResult, aBaseLogDir, anIndentLevel);
+		super( aBaseLogDir, anIndentLevel );
 		Trace.println(Trace.CONSTRUCTOR);
 		
-//		myTsResultWriter = new TestStepResultXmlWriter( aBaseLogDir, anIndentLevel+1 );
-
+		myTsResultWriter = new TestStepResultXmlWriter( aBaseLogDir, anIndentLevel+1 );
 	}
 
 	/**
-	 * @param aFile
+	 * @param aResult	the Test Case Result
+	 * @param aStream	the Stream to write the result in xml-format to
+	 * 
 	 * @throws IOException 
 	 */
-	public void printXml(OutputStreamWriter aStream) throws IOException
+	public void printXml(TestCaseResult aResult, OutputStreamWriter aStream) throws IOException
 	{
 		Trace.println(Trace.UTIL);
 
-		TestCaseResult result = (TestCaseResult) getResult();
 		aStream.write("      <testCase");
-		aStream.write(" id='" + result.getId() + "'");
-		aStream.write(" sequence='" + result.getSequenceNr() + "'");
+		aStream.write(" id='" + aResult.getId() + "'");
+		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
 		aStream.write(">\n");
 		
-		String description = result.getDescription();
+		String description = aResult.getDescription();
     	aStream.write("        <description>");
     	aStream.write(description);
     	aStream.write("</description>\n");
 		
-	    ArrayList<String> requirements = result.getRequirements();
+	    ArrayList<String> requirements = aResult.getRequirements();
     	for (int key = 0; key < requirements.size(); key++)
     		TestResultXmlWriter.printXmlRequirement(aStream, requirements.get(key));
 
-		Hashtable<Integer, TestStepResult> initializationResults = result.getInitializationResults();
+		Hashtable<Integer, TestStepResult> initializationResults = aResult.getInitializationResults();
     	for (int key = 0; key < initializationResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( initializationResults.get(key), getBaseLogDir(), 0 );
-    		tsResultWriter.printXml(aStream);
+    		myTsResultWriter.printXml(initializationResults.get(key), aStream);
     	}
 
 		aStream.write("        <execution>\n");
-		Hashtable<Integer, TestStepResult> executionResults = result.getExecutionResults();
+		Hashtable<Integer, TestStepResult> executionResults = aResult.getExecutionResults();
     	for (int key = 0; key < initializationResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( executionResults.get(key), getBaseLogDir(), 0 );
-    		tsResultWriter.printXml(aStream);
+    		myTsResultWriter.printXml(executionResults.get(key), aStream);
     	}
 		aStream.write("        </execution>\n");
 
-		Hashtable<Integer, TestStepResult> restoreResults = result.getRestoreResults();
+		Hashtable<Integer, TestStepResult> restoreResults = aResult.getRestoreResults();
     	for (int key = 0; key < restoreResults.size(); key++)
     	{
-    		TestStepResultXmlWriter tsResultWriter = new TestStepResultXmlWriter( restoreResults.get(key), getBaseLogDir(), 0 );
-    		tsResultWriter.printXml(aStream);
+    		myTsResultWriter.printXml(restoreResults.get(key), aStream);
     	}
 
-    	aStream.write("        <result>" + result.getResult().toString() + "</result>\n");
+    	aStream.write("        <result>" + aResult.getResult().toString() + "</result>\n");
 
-	    printXmlLogFiles(aStream);
-	    printXmlComment(aStream);
+	    printXmlLogFiles(aResult, aStream);
+	    printXmlComment(aResult, aStream);
 
 	    aStream.write("      </testCase>\n");
 	    aStream.flush();

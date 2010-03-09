@@ -24,36 +24,37 @@ public class TestStepResultXmlWriter extends TestResultXmlWriter
 	 * @param aResult
 	 * @param anIndentLevel
 	 */
-	public TestStepResultXmlWriter(TestStepResult aResult, File aBaseLogDir, int anIndentLevel)
+	public TestStepResultXmlWriter(File aBaseLogDir, int anIndentLevel)
 	{
-		super(aResult, aBaseLogDir, anIndentLevel);
+		super(aBaseLogDir, anIndentLevel);
 		Trace.println(Trace.LEVEL.CONSTRUCTOR);
 	}
 
 	/**
-	 * @param aStream
+	 * @param aResult	the Test Step Result
+	 * @param aStream	the stream to write the test step result in xml-format to
+	 * 
 	 * @throws IOException 
 	 */
-	public void printXml(OutputStreamWriter aStream) throws IOException
+	public void printXml(TestStepResult aResult, OutputStreamWriter aStream) throws IOException
 	{
 		Trace.println(Trace.LEVEL.UTIL);
-		TestStepResult result = (TestStepResult) this.getResult();
-		String tag = result.getType().toString();
+		String tag = aResult.getType().toString();
 		aStream.write("          <" + tag);
-		aStream.write(" sequence='" + result.getSequenceNr() + "'");
+		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
 		aStream.write(">\n");
 
-		String description = result.getDescription();
+		String description = aResult.getDescription();
     	aStream.write("        <description>");
     	aStream.write(description);
     	aStream.write("</description>\n");
 	    
-    	String command = result.getCommand();
+    	String command = aResult.getCommand();
     	if ( ! command.isEmpty() ) { aStream.write("            <command>" + command + "</command>\n"); }
-    	String script = result.getScript();
+    	String script = aResult.getScript();
     	if ( ! script.isEmpty() ) { aStream.write("            <script>" + script + "</script>\n"); }
-    	aStream.write("            <result>" + result.getResult().toString() + "</result>\n");
-    	ParameterTable parameters = result.getParameters();
+    	aStream.write("            <result>" + aResult.getResult().toString() + "</result>\n");
+    	ParameterTable parameters = aResult.getParameters();
     	ArrayList<Parameter> params = parameters.getOrderedList();
     	for(int i=0; i<params.size(); i++)
     	{
@@ -65,7 +66,7 @@ public class TestStepResultXmlWriter extends TestResultXmlWriter
         	              + param.getValue().toString() + "</parameter>\n");
     	}
 
-	    printXmlLogFiles(aStream);
+	    printXmlLogFiles(aResult, aStream);
 		aStream.write("          </" + tag + ">\n");
 	}
 }

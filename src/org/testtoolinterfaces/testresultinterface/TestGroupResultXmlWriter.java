@@ -19,47 +19,51 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class TestGroupResultXmlWriter extends TestResultXmlWriter
 {
-    /**
-	 * @param aTestGroupName
-	 */
-	public TestGroupResultXmlWriter(TestGroupResult aTestGroupResult, File aBaseLogDir, int anIndentLevel)
+	private TestGroupResultXmlWriter myTgResultWriter = null;
+	private TestCaseResultXmlWriter myTcResultWriter;
+
+	public TestGroupResultXmlWriter(File aBaseLogDir, int anIndentLevel)
 	{
-		super( aTestGroupResult, aBaseLogDir, anIndentLevel );
+		super( aBaseLogDir, anIndentLevel );
 		Trace.println(Trace.CONSTRUCTOR);
+
+		myTcResultWriter = new TestCaseResultXmlWriter( aBaseLogDir, anIndentLevel+1 );
 	}
 
 	/**
 	 * @param aFile
 	 * @throws IOException 
 	 */
-	public void printXml(OutputStreamWriter aStream) throws IOException
+	public void printXml(TestGroupResult aTestGroupResult, OutputStreamWriter aStream) throws IOException
 	{
-	    Trace.println(Trace.UTIL);
-		TestGroupResult result = (TestGroupResult) getResult();
+	    Trace.println(Trace.UTIL, "printXml( " + aTestGroupResult.getId() + " )", true);
 		aStream.write("    <testGroup");
-		aStream.write(" id='" + result.getId() + "'");
-		aStream.write(" sequence='" + result.getSequenceNr() + "'");
+		aStream.write(" id='" + aTestGroupResult.getId() + "'");
+		aStream.write(" sequence='" + aTestGroupResult.getSequenceNr() + "'");
 		aStream.write(">\n");			
 
 		// Test Groups
-		Hashtable<Integer, TestGroupResult> tgResults = result.getTestGroupResults();
+		Hashtable<Integer, TestGroupResult> tgResults = aTestGroupResult.getTestGroupResults();
     	for (int key = 0; key < tgResults.size(); key++)
     	{
-    		TestGroupResultXmlWriter tgResultWriter = new TestGroupResultXmlWriter( tgResults.get(key), getBaseLogDir(), 0 );
-    		tgResultWriter.printXml(aStream);
+    		if ( myTgResultWriter == null )
+    		{
+        		myTgResultWriter = new TestGroupResultXmlWriter( this.getBaseLogDir(), this.getIndentLevel()+1 );
+    		}
+
+    		myTgResultWriter.printXml(tgResults.get(key), aStream);
     	}
 
 		// Test Cases
-		Hashtable<Integer, TestCaseResult> tcResults = result.getTestCaseResults();
+		Hashtable<Integer, TestCaseResult> tcResults = aTestGroupResult.getTestCaseResults();
     	for (int key = 0; key < tcResults.size(); key++)
     	{
-    		TestCaseResultXmlWriter tcResultWriter = new TestCaseResultXmlWriter( tcResults.get(key), getBaseLogDir(), 0 );
-    		tcResultWriter.printXml(aStream);
+    		myTcResultWriter.printXml(tcResults.get(key), aStream);
     	}
 
-	    printXmlLogFiles(aStream);
+	    printXmlLogFiles( aTestGroupResult, aStream);
 
-	    printXmlSummary( aStream );
+	    printXmlSummary( aTestGroupResult, aStream );
 
 	    aStream.write("    </testGroup>\n");
 	    aStream.flush();
@@ -75,19 +79,18 @@ public class TestGroupResultXmlWriter extends TestResultXmlWriter
 	 * 
 	 * @throws IOException
 	 */
-	public void printXmlSummary(OutputStreamWriter aStream) throws IOException
+	public void printXmlSummary(TestGroupResult aTestGroupResult, OutputStreamWriter aStream) throws IOException
 	{
 	    Trace.println(Trace.UTIL);
-		TestGroupResult result = (TestGroupResult) getResult();
 	    aStream.write("      <summary>\n");
 	    aStream.write("        <totalTestCases>");
-	    aStream.write( ((Integer) result.getNrOfTCs()).toString() );
+	    aStream.write( ((Integer) aTestGroupResult.getNrOfTCs()).toString() );
 	    aStream.write("</totalTestCases>\n");
 	    aStream.write("        <totalPassed>");
-	    aStream.write( ((Integer) result.getNrOfTCsPassed()).toString() );
+	    aStream.write( ((Integer) aTestGroupResult.getNrOfTCsPassed()).toString() );
 	    aStream.write("</totalPassed>\n");
 	    aStream.write("        <totalFailed>");
-	    aStream.write( ((Integer) result.getNrOfTCsFailed()).toString() );
+	    aStream.write( ((Integer) aTestGroupResult.getNrOfTCsFailed()).toString() );
 	    aStream.write("</totalFailed>\n");
 	    aStream.write("      </summary>\n");
 	}

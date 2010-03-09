@@ -16,15 +16,13 @@ import org.testtoolinterfaces.utils.Warning;
 
 public abstract class TestResultXmlWriter
 {
-	private TestResult myResult;
-//	private int myIndentLevel = 0;
+	private int myIndentLevel = 0;
 	private String myBaseLogDir = "";
 	
-	public TestResultXmlWriter( TestResult aResult, File aBaseLogDir, int anIndentLevel )
+	public TestResultXmlWriter(File aBaseLogDir, int anIndentLevel)
 	{
 	    Trace.println(Trace.CONSTRUCTOR);
-		myResult = aResult;
-//		myIndentLevel = anIndentLevel;
+		myIndentLevel = anIndentLevel;
 		try
 		{
 			myBaseLogDir = aBaseLogDir.getCanonicalPath();
@@ -38,15 +36,15 @@ public abstract class TestResultXmlWriter
 	/**
 	 * Checks if there are log-files and then prints them in XML format 
 	 * 
-	 * @param aStream   OutputStreamWriter of the stream to print the xml to
-	 * @param aLogs     Hashtable of the logfiles
+	 * @param aTestResult   Test Result(s)
+	 * @param aStream   	OutputStreamWriter of the stream to print the xml to
 	 * 
 	 * @throws IOException
 	 */
-	public void printXmlLogFiles(OutputStreamWriter aStream) throws IOException
+	public void printXmlLogFiles(TestResult aTestResult, OutputStreamWriter aStream) throws IOException
 	{
 	    Trace.println(Trace.UTIL);
-		Hashtable<String, String> logs = myResult.getLogs();
+		Hashtable<String, String> logs = aTestResult.getLogs();
 		
       	if (!logs.isEmpty())
       	{
@@ -77,15 +75,15 @@ public abstract class TestResultXmlWriter
 	/**
 	 * Checks if there is a comment and then prints it in XML format
 	 * 
-	 * @param aStream   OutputStreamWriter of the stream to print the xml to
-	 * @param aLogs     the logfiles
+	 * @param aStream		the OutputStreamWriter of the stream to write the xml to
+	 * @param aTestResult	the Test Result(s)
 	 * 
 	 * @throws IOException
 	 */
-	public void printXmlComment(OutputStreamWriter aStream) throws IOException
+	protected void printXmlComment(TestResult aTestResult, OutputStreamWriter aStream) throws IOException
 	{
 	    Trace.println(Trace.UTIL);
-		String comment = myResult.getComment();
+		String comment = aTestResult.getComment();
 	    if ( !comment.isEmpty() )
 	    {
 	    	aStream.write("        <comment>");
@@ -94,20 +92,12 @@ public abstract class TestResultXmlWriter
 	    }
 	}
 
-	public static void printXmlRequirement(OutputStreamWriter aStream, String aRequirementId) throws IOException
+	protected static void printXmlRequirement(OutputStreamWriter aStream, String aRequirementId) throws IOException
 	{
 	    Trace.println(Trace.UTIL);
     	aStream.write("        <requirementId>");
     	aStream.write(aRequirementId);
     	aStream.write("</requirementId>\n");
-	}
-
-	/**
-	 * @return the Result
-	 */
-	protected TestResult getResult()
-	{
-		return myResult;
 	}
 
 	/**
@@ -117,4 +107,10 @@ public abstract class TestResultXmlWriter
 	{
 		return new File(myBaseLogDir);
 	}
+
+	protected int getIndentLevel()
+	{
+		return myIndentLevel;
+	}
+
 }
