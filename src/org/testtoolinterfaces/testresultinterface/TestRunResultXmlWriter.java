@@ -31,6 +31,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	
 	private File myFileName;
 	private TestGroupResultXmlWriter myTgResultWriter;
+	private TestRunResult myRunResult;
 
 	/**
 	 * 
@@ -66,6 +67,12 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		myTgResultWriter = new TestGroupResultXmlWriter( myBaseLogDir, 1 );
 	}
 
+	@Override
+	public void setResult(TestRunResult aRunResult)
+	{
+		myRunResult = aRunResult;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
 	 */
@@ -85,6 +92,17 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		{
 			Warning.println("Saving XML failed: " + e.getMessage());
 			Trace.print(Trace.LEVEL.SUITE, e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#intermediateWrite()
+	 */
+	public void intermediateWrite()
+	{
+		if ( myRunResult != null )
+		{
+			write( myRunResult );
 		}
 	}
 
