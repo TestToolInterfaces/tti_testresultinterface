@@ -76,15 +76,20 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
 	 */
-	public void write(TestRunResult aRunResult )
+	public void write()
 	{
+		if ( myRunResult == null )
+		{
+			return;
+		}
+
 		FileWriter xmlFile;
 		try
 		{
 			xmlFile = new FileWriter( myFileName );
 
-			printXmlHeader( aRunResult, xmlFile, myFileName.getName() );
-			printXmlTestRuns( aRunResult, xmlFile );
+			printXmlHeader( myRunResult, xmlFile, myFileName.getName() );
+			printXmlTestRuns( myRunResult, xmlFile );
 			
 			xmlFile.flush();
 		}
@@ -100,10 +105,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	 */
 	public void intermediateWrite()
 	{
-		if ( myRunResult != null )
-		{
-			write( myRunResult );
-		}
+		write();
 	}
 
 	/**

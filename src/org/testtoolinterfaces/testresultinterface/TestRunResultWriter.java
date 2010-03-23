@@ -7,7 +7,7 @@ public interface TestRunResultWriter
 	/**
 	 * To write the end result
 	 */
-	public abstract void write( TestRunResult aRunResult );
+	public abstract void write();
 
 	/**
 	 * To write an intermediate result
