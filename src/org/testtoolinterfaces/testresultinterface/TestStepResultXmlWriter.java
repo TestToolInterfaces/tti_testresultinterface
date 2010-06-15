@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.Parameter;
-import org.testtoolinterfaces.testsuite.ParameterTable;
+import org.testtoolinterfaces.testsuite.ParameterArrayList;
 
 import org.testtoolinterfaces.utils.Trace;
 
@@ -54,8 +54,8 @@ public class TestStepResultXmlWriter extends TestResultXmlWriter
     	String script = aResult.getScript();
     	if ( ! script.isEmpty() ) { aStream.write("            <script>" + script + "</script>\n"); }
     	aStream.write("            <result>" + aResult.getResult().toString() + "</result>\n");
-    	ParameterTable parameters = aResult.getParameters();
-    	ArrayList<Parameter> params = parameters.getOrderedList();
+    	ParameterArrayList parameters = aResult.getParameters();
+    	ArrayList<Parameter> params = parameters.sort();
     	for(int i=0; i<params.size(); i++)
     	{
     		Parameter param = params.get(i);

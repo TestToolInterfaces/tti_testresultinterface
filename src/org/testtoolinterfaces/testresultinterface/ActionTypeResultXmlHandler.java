@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
-import org.testtoolinterfaces.testsuite.ParameterTable;
+import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.testsuite.TestStepImpl;
 import org.xml.sax.Attributes;
@@ -127,7 +127,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		Trace.println(Trace.SUITE);
 
 		TestStep.ActionType action = TestStep.ActionType.valueOf(this.getStartElement());
-		TestStep testStep = new TestStepImpl( action, myCurrentSequence, "", myCommand, new ParameterTable() );
+		TestStep testStep = new TestStepImpl( action, myCurrentSequence, "", myCommand, new ParameterArrayList() );
 		TestStepResult testStepResult = new TestStepResult( testStep );
 		testStepResult.setResult( myResult );
       	if (!myLogFiles.isEmpty())

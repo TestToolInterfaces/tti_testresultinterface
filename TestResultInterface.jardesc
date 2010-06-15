@@ -11,12 +11,11 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=TestResultInterface/test"/>
+        <javaElement handleIdentifier="=Utils/src"/>
+        <javaElement handleIdentifier="=TestSuite/src"/>
         <javaElement handleIdentifier="=TestResult/src"/>
         <file path="/TestResultInterface/TestResultInterface.manifest"/>
         <file path="/TestResultInterface/License_lgpl-3.0.txt"/>
-        <javaElement handleIdentifier="=Utils/src"/>
-        <javaElement handleIdentifier="=TestSuite/src"/>
         <javaElement handleIdentifier="=TestResultInterface/src"/>
     </selectedElements>
 </jardesc>
