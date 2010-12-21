@@ -7,7 +7,8 @@ import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.TestStep;
-import org.testtoolinterfaces.testsuite.TestStepImpl;
+import org.testtoolinterfaces.testsuite.TestStepCommand;
+import org.testtoolinterfaces.testsuite.TestStepSimple;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
@@ -43,7 +44,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	private TestResult.VERDICT myResult = TestResult.UNKNOWN;
 	private Hashtable<String, String> myLogFiles = new Hashtable<String, String>();
 
-	public ActionTypeResultXmlHandler( XMLReader anXmlReader, TestStep.ActionType aTag )
+	public ActionTypeResultXmlHandler( XMLReader anXmlReader, TestStep.StepType aTag )
 	{
 		super(anXmlReader, aTag.toString());
 		Trace.println(Trace.CONSTRUCTOR, "ActionTypeResultXmlHandler( anXmlreader, " + aTag + " )", true);
@@ -126,8 +127,8 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 
-		TestStep.ActionType action = TestStep.ActionType.valueOf(this.getStartElement());
-		TestStep testStep = new TestStepImpl( action, myCurrentSequence, "", myCommand, new ParameterArrayList() );
+		TestStep.StepType action = TestStep.StepType.valueOf(this.getStartElement());
+		TestStepSimple testStep = new TestStepCommand( action, myCurrentSequence, "", myCommand, "", new ParameterArrayList() );
 		TestStepResult testStepResult = new TestStepResult( testStep );
 		testStepResult.setResult( myResult );
       	if (!myLogFiles.isEmpty())

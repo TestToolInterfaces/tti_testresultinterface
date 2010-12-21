@@ -1,5 +1,7 @@
 package org.testtoolinterfaces.testresultinterface;
 
+import java.io.File;
+
 import org.testtoolinterfaces.testresult.TestRunResult;
 
 public interface TestRunResultWriter
@@ -7,16 +9,10 @@ public interface TestRunResultWriter
 	/**
 	 * To write the end result
 	 */
-	public abstract void write();
+	public abstract void write( TestRunResult aRunResult, File aResultFile );
 
 	/**
-	 * To write an intermediate result
+	 * To update a previously written result file
 	 */
-	public abstract void intermediateWrite();
-
-	/**
-	 * To set the run result object for later intermediate writes.
-	 * @param aRunResult
-	 */
-	public abstract void setResult( TestRunResult aRunResult );
+	public abstract void update( TestRunResult aRunResult );
 }

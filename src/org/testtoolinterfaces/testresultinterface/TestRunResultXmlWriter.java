@@ -6,14 +6,11 @@ package org.testtoolinterfaces.testresultinterface;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOError;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
+import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestRunResult;
 
 import org.testtoolinterfaces.utils.Trace;
@@ -25,60 +22,57 @@ import org.testtoolinterfaces.utils.Warning;
  */
 public class TestRunResultXmlWriter implements TestRunResultWriter
 {
+	private File myXslDir;
 	private String myTestEnvironment = "Unknown";
 	private String myTestPhase = "Unknown";
-	private File myBaseLogDir = new File( "" );
+	private File myBaseLogDir;
+	private File myResultFile;
 	
-	private File myFileName;
 	private TestGroupResultXmlWriter myTgResultWriter;
-	private TestRunResult myRunResult;
 
 	/**
 	 * 
 	 */
-	public TestRunResultXmlWriter( File aFileName,
-								   File anXslSourceDir,
-								   String anEnvironment,
-								   String aTestPhase )
+	public TestRunResultXmlWriter( Configuration aConfiguration,
+	                               String anEnvironment,
+	                               String aTestPhase )
 	{
-	    Trace.println(Trace.CONSTRUCTOR, "TestRunResultXmlWriter( " + aFileName.getName() + " )", true);
-		if (anXslSourceDir == null)
+	    Trace.println(Trace.CONSTRUCTOR, "TestRunResultXmlWriter( aConfiguration, "
+						+ anEnvironment + ", "
+						+ aTestPhase + " )", true);
+		myXslDir = aConfiguration.getRunXslDir();
+		if (myXslDir == null)
 		{
-			throw new Error( "No directory specified." );
+		throw new Error( "No directory specified." );
 		}
-
-		if (! anXslSourceDir.isDirectory())
+		
+		if (! myXslDir.isDirectory())
 		{
-			throw new Error( "Not a directory: " + anXslSourceDir.getAbsolutePath() );
+			throw new Error( "Not a directory: " + myXslDir.getPath() );
 		}
-
-		myFileName = aFileName;
+		
 		myTestEnvironment = anEnvironment;
 		myTestPhase = aTestPhase;
-
-		File logDir = aFileName.getParentFile();
-        if (!logDir.exists())
-        {
-        	logDir.mkdir();
-        }
-		copyXsl( anXslSourceDir, logDir );
-		myBaseLogDir = logDir;
-
-		myTgResultWriter = new TestGroupResultXmlWriter( myBaseLogDir, 1 );
-	}
-
-	@Override
-	public void setResult(TestRunResult aRunResult)
-	{
-		myRunResult = aRunResult;
+		
+		myTgResultWriter = new TestGroupResultXmlWriter( aConfiguration );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
 	 */
-	public void write()
+	public void write(TestRunResult aRunResult, File aFileName)
 	{
-		if ( myRunResult == null )
+		myResultFile = aFileName;
+		
+		File logDir = aFileName.getParentFile();
+        if (!logDir.exists())
+        {
+        	logDir.mkdir();
+        }
+		XmlWriterUtils.copyXsl( myXslDir, logDir );
+		myBaseLogDir = logDir;
+
+		if ( aRunResult == null )
 		{
 			return;
 		}
@@ -86,16 +80,16 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		FileWriter xmlFile;
 		try
 		{
-			xmlFile = new FileWriter( myFileName );
+			xmlFile = new FileWriter( aFileName );
 
-			printXmlHeader( myRunResult, xmlFile, myFileName.getName() );
-			printXmlTestRuns( myRunResult, xmlFile );
+			printXmlHeader( aRunResult, xmlFile, aFileName.getName() );
+			printXmlTestRuns( aRunResult, xmlFile );
 			
 			xmlFile.flush();
 		}
 		catch (IOException e)
 		{
-			Warning.println("Saving XML failed: " + e.getMessage());
+			Warning.println("Saving Test Run Result XML failed: " + e.getMessage());
 			Trace.print(Trace.LEVEL.SUITE, e);
 		}
 	}
@@ -103,9 +97,18 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#intermediateWrite()
 	 */
-	public void intermediateWrite()
+	public void update( TestRunResult aRunResult )
 	{
-		write();
+	    Trace.println(Trace.UTIL, "update( " + aRunResult.getDisplayName() + " )", true);
+
+	    if (myResultFile == null)
+		{
+			Warning.println("Cannot update a test-run file that is not yet written");
+		}
+		else
+		{
+			write( aRunResult, myResultFile );			
+		}
 	}
 
 	/**
@@ -114,8 +117,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	 */
 	public void printXmlHeader (TestRunResult aRunResult, OutputStreamWriter aStream, String aDocName) throws IOException
 	{
-		aStream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		aStream.write("<?xml-stylesheet type=\"text/xsl\" href=\"testLog.xsl\"?>\n\n");
+		XmlWriterUtils.printXmlDeclaration(aStream, "testrun.xsl");
 
 		aStream.write("<!--\n");
 		aStream.write("    Document   : " + aDocName + "\n");
@@ -126,56 +128,68 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	}
 	
 	/**
-	 * @param aFile
+	 * @param aRunResult
+	 * @param aStream
 	 * @throws IOException
 	 */
 	public void printXmlTestRuns (TestRunResult aRunResult, OutputStreamWriter aStream) throws IOException
 	{
-		aStream.write("<testrun");
-		aStream.write(" name='" + aRunResult.getDisplayName() + "'");
-		aStream.write(" suite='" + aRunResult.getTestSuite() + "'");
-		aStream.write(" environment='" + myTestEnvironment + "'");
-		aStream.write(" phase='" + myTestPhase + "'");
-		aStream.write(" author='" + aRunResult.getAuthor() + "'");
-		aStream.write(" machine='" + aRunResult.getMachine() + "'");
-		aStream.write(" created='" + aRunResult.getStartDateString() + "'");
-		aStream.write(" startdate='" + aRunResult.getStartDateString() + "'");
-		aStream.write(" starttime='" + aRunResult.getStartTimeString() + "'");
-		aStream.write(" enddate='" + aRunResult.getEndDateString() + "'");
-		aStream.write(" endtime='" + aRunResult.getEndTimeString() + "'");
-		aStream.write(">\n");
+		aStream.write("<testrun\n");
+		aStream.write("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		aStream.write("    xsi:noNamespaceSchemaLocation=\"TestResult_Run.xsd\"\n");
+		aStream.write("    xsdMain='0'\n");
+		aStream.write("    xsdSub='2'\n");
+		aStream.write("    xsdPatch='0'\n");
+		aStream.write("    name='" + aRunResult.getDisplayName() + "'\n");
+		aStream.write("    suite='" + aRunResult.getTestSuite() + "'\n");
+		aStream.write("    environment='" + myTestEnvironment + "'\n");
+		aStream.write("    phase='" + myTestPhase + "'\n");
+		aStream.write("    author='" + aRunResult.getAuthor() + "'\n");
+		aStream.write("    machine='" + aRunResult.getMachine() + "'\n");
+		aStream.write("    status='" + aRunResult.getStatus() + "'\n");
+		aStream.write("    startdate='" + aRunResult.getStartDateString() + "'\n");
+		aStream.write("    starttime='" + aRunResult.getStartTimeString() + "'\n");
+		aStream.write("    enddate='" + aRunResult.getEndDateString() + "'\n");
+		aStream.write("    endtime='" + aRunResult.getEndTimeString() + "'\n");
+		aStream.write("  >\n");
 		
 		// System Under Test
 	    printXmlSut( aRunResult, aStream );
-	    
-		myTgResultWriter.printXml(aRunResult.getTestGroup(), aStream);
+	
+	    TestGroupResult tgResult = aRunResult.getTestGroup();
+	    if ( tgResult != null )
+	    {
+			myTgResultWriter.printXml(tgResult, aStream, "  ", myBaseLogDir);
+	    }
 	    
 	    aStream.write("</testrun>\n");
 	}
 
 	/**
-	 * @param aFile
+	 * @param aRunResult
+	 * @param aStream
 	 * @throws IOException
 	 */
 	public void printXmlSut (TestRunResult aRunResult, OutputStreamWriter aStream) throws IOException
 	{
 		if (!aRunResult.getSutProduct().isEmpty())
 		{
-			aStream.write("    <systemundertest");
+			aStream.write("  <systemundertest");
 			aStream.write(" product='" + aRunResult.getSutProduct() + "'");
 			aStream.write(">\n");
 
-			aStream.write("      <version");
-			aStream.write(" mainLevel='" + aRunResult.getSutVersionMainLevel() + "'");
-			aStream.write(" subLevel='" + aRunResult.getSutVersionSubLevel() + "'");
-			aStream.write(" patchLevel='" + aRunResult.getSutVersionPatchLevel() + "'");
+			aStream.write("    <version");
+			aStream.write(" main='" + aRunResult.getSutVersionMainLevel() + "'");
+			aStream.write(" sub='" + aRunResult.getSutVersionSubLevel() + "'");
+			aStream.write(" patch='" + aRunResult.getSutVersionPatchLevel() + "'");
 			aStream.write(">\n");
 
 	      	// System Under Test logs
 			printXmlLogFiles( aRunResult.getSutLogs(), aStream );
+			XmlWriterUtils.printXmlLogFiles( aRunResult.getSutLogs(), aStream, myBaseLogDir.getAbsolutePath(), "      " );
 
-	      	aStream.write("      </version>\n");
-	      	aStream.write("    </systemundertest>\n");
+	      	aStream.write("    </version>\n");
+	      	aStream.write("  </systemundertest>\n");
 	    }
 	}
 
@@ -193,7 +207,6 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		
       	if (!aLogs.isEmpty())
       	{
-      		aStream.write("        <logFiles>\n");
 		    for (Enumeration<String> keys = aLogs.keys(); keys.hasMoreElements();)
 		    {
 		    	String key = keys.nextElement();
@@ -208,64 +221,12 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 			    	}
 		    	}
 	    		logFile = logFile.replace('\\', '/');
-		    	aStream.write("          <logFile");
-		    	aStream.write(" type='" + key + "'");
+		    	aStream.write("      <logfile");
+		    	aStream.write(" id='" + key + "'");
+		    	aStream.write(" type='text'");
 		    	aStream.write(">" + logFile);
-		    	aStream.write("</logFile>\n");
+		    	aStream.write("</logfile>\n");
 		    }
-  
-		    aStream.write("        </logFiles>\n");
       	}
-	}
-
-	private void copyXsl(File aSourceDir, File aTargetLogDir)
-	{
-	    Trace.println(Trace.LEVEL.UTIL, "copyXsl( " + aTargetLogDir.getName() + " )", true);
-		if ( aSourceDir == null )
-		{
-			return;
-		}
-		
-        File[] files = aSourceDir.listFiles();
-        for (int i=0; i<files.length; i++)
-        {
-        	File srcFile = files[i];
-        	if (!srcFile.isDirectory())
-        	{
-            	File tgtFile = new File(aTargetLogDir + File.separator + srcFile.getName());
-
-            	FileChannel inChannel = null;
-            	FileChannel outChannel = null;
-            	try
-            	{
-            		inChannel = new FileInputStream(srcFile).getChannel();
-            		outChannel = new FileOutputStream(tgtFile).getChannel();
-                	inChannel.transferTo(0, inChannel.size(), outChannel);
-                } 
-                catch (IOException e)
-                {
-                	throw new IOError( e );
-                }
-                finally
-                {
-	                if (inChannel != null) try
-					{
-						inChannel.close();
-					}
-					catch (IOException exc)
-					{
-	                	throw new IOError( exc );
-					}
-	                if (outChannel != null) try
-					{
-						outChannel.close();
-					}
-					catch (IOException exc)
-					{
-	                	throw new IOError( exc );
-					}
-	            }
-        	}
-        }
 	}
 }

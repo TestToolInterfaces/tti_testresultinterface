@@ -23,9 +23,9 @@ import org.testtoolinterfaces.utils.XmlHandler;
  * @author Arjan Kranenburg 
  * 
  * <testcase id=... sequence=...>
- *  <initialization>
+ *  <prepare>
  *   ...
- *  </initialization>
+ *  </prepare>
  *  <execution>
  *   ...
  *  </execution>
@@ -33,9 +33,9 @@ import org.testtoolinterfaces.utils.XmlHandler;
  *   ...
  *  </restore>
  *  <result>...</result>
- *  <logFiles>
+ *  <logfiles>
  *  ...
- *  </logFiles>
+ *  </logfiles>
  *  <comment>...</comment>
  * </testcase>
  */
@@ -80,17 +80,17 @@ public class TestCaseResultXmlHandler extends XmlHandler
 
 		this.reset();
 
-		myInitializeResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.ActionType.initialize);
-		this.addStartElementHandler(TestStep.ActionType.initialize.toString(), myInitializeResultXmlHandler);
-		myInitializeResultXmlHandler.addEndElementHandler(TestStep.ActionType.initialize.toString(), this);
+		myInitializeResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
+		this.addStartElementHandler(TestStep.StepType.action.toString(), myInitializeResultXmlHandler);
+		myInitializeResultXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
 
 		myExecutionResultXmlHandler = new ExecutionResultXmlHandler(anXmlReader);
 		this.addStartElementHandler(ExecutionResultXmlHandler.START_ELEMENT, myExecutionResultXmlHandler);
 		myExecutionResultXmlHandler.addEndElementHandler(ExecutionResultXmlHandler.START_ELEMENT, this);
 
-		myRestoreResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.ActionType.restore);
-		this.addStartElementHandler(TestStep.ActionType.restore.toString(), myRestoreResultXmlHandler);
-		myRestoreResultXmlHandler.addEndElementHandler(TestStep.ActionType.restore.toString(), this);
+		myRestoreResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
+		this.addStartElementHandler(TestStep.StepType.action.toString(), myRestoreResultXmlHandler);
+		myRestoreResultXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
 		this.addStartElementHandler(RESULT_ELEMENT, myResultXmlHandler);
@@ -139,13 +139,23 @@ public class TestCaseResultXmlHandler extends XmlHandler
 			throw new SAXParseException("Unknown TestCase ID", new LocatorImpl());
 		}
 
-	    TestCase testCase = new TestCaseImpl( myCurrentTestCaseId,
-       										  myCurrentSequence,
-       										  myComment,
-       										  null,   // Requirements are not read.
+		TestCase testCase = new TestCaseImpl( myCurrentTestCaseId,
+	                                          new Hashtable<String, String>(),
+       										  "",
+       										  new ArrayList<String>(),   // Requirements are not read.
        										  null,
        										  null,
-       										  null ); // testSteps are null, but added below
+       										  null,
+       										  new Hashtable<String, String>() ); // testSteps are null, but added below
+
+//		String aTestCaseId,
+//        Hashtable<String, String> anAnyAttributes,
+//		String aDescription,
+//		ArrayList<String> aRequirementIds,
+//		TestStepArrayList aPrepareSteps,
+//		TestStepArrayList anExecutionSteps,
+//		TestStepArrayList aRestoreSteps,
+//		Hashtable<String, String> anAnyElements )
 
        	TestCaseResult testCaseResult = new TestCaseResult( testCase );
        	testCaseResult.setResult(myResult);

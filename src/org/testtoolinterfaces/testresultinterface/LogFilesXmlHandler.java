@@ -11,16 +11,16 @@ import org.testtoolinterfaces.utils.XmlHandler;
 /**
  * @author Arjan Kranenburg 
  * 
- * <logFiles>
- *   <logFile type="...">...</logFile>
- *   <logFile type="...">...</logFile>
+ * <logfiles>
+ *   <logfile type="...">...</logfile>
+ *   <logfile type="...">...</logfile>
  *   ...
- * </logFiles>
+ * </logfiles>
  * 
  */
 public class LogFilesXmlHandler extends XmlHandler
 {
-	public static final String START_ELEMENT = "logFiles";
+	public static final String START_ELEMENT = "logfiles";
 	
 	private Hashtable<String, String> myLogFiles = new Hashtable<String, String>();
 

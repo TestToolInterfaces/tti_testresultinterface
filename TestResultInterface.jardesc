@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="C:/Users/Femke/Documents/Arjan/Eclipses/java/workspace/TestResultInterface.jar"/>
+    <jar path="C:/Users/Arjan/Projects/Testium/Eclipses/java/workspace/TestResultInterface.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/TestResultInterface/TestResultInterface.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -10,12 +10,13 @@
             <packagesToUnSeal/>
         </sealing>
     </manifest>
-    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=Utils/src"/>
-        <javaElement handleIdentifier="=TestSuite/src"/>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <file path="/TestResult/License_lgpl-3.0.txt"/>
         <javaElement handleIdentifier="=TestResult/src"/>
         <file path="/TestResultInterface/TestResultInterface.manifest"/>
         <file path="/TestResultInterface/License_lgpl-3.0.txt"/>
+        <javaElement handleIdentifier="=Utils/src"/>
+        <javaElement handleIdentifier="=TestSuite/src"/>
         <javaElement handleIdentifier="=TestResultInterface/src"/>
     </selectedElements>
 </jardesc>
