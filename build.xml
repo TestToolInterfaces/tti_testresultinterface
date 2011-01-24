@@ -14,7 +14,7 @@
 			<manifest>
 		        <attribute name="Created-By" value="TestToolInterfaces.org"/>
 		        <attribute name="Built-By" value="${user.name}"/>
-		        <attribute name="Implementation-Title" value="Test Tool Interfaces - Result Interface" />
+		        <attribute name="Implementation-Title" value="Test Tool Interfaces - Test Result Interface" />
 		        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
 		        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
 		        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />

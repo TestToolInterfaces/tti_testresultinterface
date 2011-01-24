@@ -33,7 +33,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	public TestCaseResultXmlWriter(Configuration aConfiguration)
 	{
 		Trace.println(Trace.CONSTRUCTOR, "TestCaseResultXmlWriter( aConfiguration )", true);
-		myXslDir = aConfiguration.getGroupXslDir();
+		myXslDir = aConfiguration.getCaseXslDir();
 		if (myXslDir == null)
 		{
 		throw new Error( "No directory specified." );
@@ -52,7 +52,9 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	 */
 	public void write( TestCaseResult aTestCaseResult, File aResultFile )
 	{
-	    Trace.println(Trace.UTIL, "write( " + aResultFile.getPath() + " )", true);
+	    Trace.println( Trace.UTIL,
+	                   "write( " + aResultFile.getPath() + " )",
+	                   true );
 		if ( aTestCaseResult == null )
 		{
 			return;
@@ -60,7 +62,32 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 
 		myResultFile = aResultFile;
 
-		File logDir = aResultFile.getParentFile();
+		writeToFile(aTestCaseResult, aResultFile);
+
+		aTestCaseResult.register(this);
+	}
+
+	@Override
+	public void notify( TestCaseResult aTestCaseResult )
+	{
+	    Trace.println( Trace.UTIL,
+	                   "notify( " + aTestCaseResult.getId() + " )",
+	                   true );
+		writeToFile(aTestCaseResult, myResultFile);
+	}
+
+	/**
+	 * @param aTestCaseResult
+	 * @param aResultFile
+	 */
+	private void writeToFile(TestCaseResult aTestCaseResult, File aResultFile)
+	{
+	    Trace.println( Trace.UTIL,
+	                   "writeToFile( " + aTestCaseResult.getId() + ", "
+	                   				   + aResultFile.getPath() + " )",
+	                   true );
+
+	    File logDir = aResultFile.getParentFile();
         if (!logDir.exists())
         {
         	logDir.mkdir();
@@ -111,21 +138,15 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 		}
 	}
 
-	@Override
-	public void update( TestCaseResult aTestCaseResult )
-	{
-		write( aTestCaseResult, myResultFile );
-	}
-
 	/**
 	 * @param aStream
 	 * @param aDescription
 	 * @param anIndent
 	 * @throws IOException
 	 */
-	private void printDescription(OutputStreamWriter aStream,
-									String aDescription, String anIndent)
-																			throws IOException
+	private void printDescription( OutputStreamWriter aStream,
+	                               String aDescription,
+	                               String anIndent ) throws IOException
 	{
 		aStream.write(anIndent + "  <description>");
     	aStream.write(aDescription);

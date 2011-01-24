@@ -41,7 +41,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	private String myType;
 	private int mySequence;
 
-	private File myTcLink;
+	private File myTgResultLink;
 	private ResultSummary myResult;
 
 	private GenericTagAndStringXmlHandler myTestGroupLinkXmlHandler;
@@ -69,7 +69,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		Trace.println(Trace.SUITE);
     	if (aQualifiedName.equalsIgnoreCase(ELEMENT_LINK))
     	{
-    		myTcLink = new File( myTestGroupLinkXmlHandler.getValue() );
+    		myTgResultLink = new File( myTestGroupLinkXmlHandler.getValue() );
     		myTestGroupLinkXmlHandler.reset();
     	}
     	else if (aQualifiedName.equalsIgnoreCase(SummaryResultXmlHandler.ELEMENT_START))
@@ -111,7 +111,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 		TestGroupLink tgLink = new TestGroupLink( myTestGroupId, myType, mySequence, new File("unknown"), new Hashtable<String, String>() );
-		TestGroupResultLink tgResultLink = new TestGroupResultLink(tgLink, myResult, myTcLink);
+		TestGroupResultLink tgResultLink = new TestGroupResultLink(tgLink, myResult, myTgResultLink);
 		return tgResultLink;
 	}
 
@@ -122,7 +122,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		myType = "";
 		mySequence = 0;
 
-		myTcLink = new File( "unknown" );
+		myTgResultLink = new File( "unknown" );
 		myResult = new ResultSummary(0, 0, 0, 0);
 	}
 

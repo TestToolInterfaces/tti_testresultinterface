@@ -24,7 +24,7 @@ import org.testtoolinterfaces.utils.Warning;
 public class TestGroupResultXmlWriter implements TestGroupResultWriter
 {
 	private File myXslDir;
-	private File myResultFile;
+	private Hashtable<String, File> myResultFiles;
 	
 	public TestGroupResultXmlWriter( Configuration aConfiguration )
 	{
@@ -32,13 +32,15 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		myXslDir = aConfiguration.getGroupXslDir();
 		if (myXslDir == null)
 		{
-		throw new Error( "No directory specified." );
+			throw new Error( "No directory specified." );
 		}
 		
 		if (! myXslDir.isDirectory())
 		{
 			throw new Error( "Not a directory: " + myXslDir.getPath() );
 		}
+		
+		myResultFiles = new Hashtable<String, File>();
 	}
 
 	/* (non-Javadoc)
@@ -51,9 +53,35 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		{
 			return;
 		}
-		
-		myResultFile = aResultFile;
+		myResultFiles.put(aTestGroupResult.getId(), aResultFile);
 
+		writeToFile(aTestGroupResult, aResultFile);
+
+		aTestGroupResult.register(this);
+	}
+
+	@Override
+	public void notify( TestGroupResult aTestGroupResult )
+	{
+	    Trace.println(Trace.UTIL, "notify( " + aTestGroupResult.getId() + " )", true);
+
+	    File resultFile = myResultFiles.get( aTestGroupResult.getId() );
+	    if (resultFile == null)
+		{
+			Warning.println("Cannot update a test group file that is not yet written");
+		}
+		else
+		{
+			writeToFile(aTestGroupResult, resultFile);
+		}
+	}
+
+	/**
+	 * @param aTestGroupResult
+	 * @param aResultFile
+	 */
+	private void writeToFile(TestGroupResult aTestGroupResult, File aResultFile)
+	{
 		File logDir = aResultFile.getParentFile();
         if (!logDir.exists())
         {
@@ -92,21 +120,6 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		{
 			Warning.println("Saving Test Group Result XML failed: " + exception.getMessage());
 			Trace.print(Trace.LEVEL.SUITE, exception);
-		}
-	}
-
-	@Override
-	public void update( TestGroupResult aTestGroupResult )
-	{
-	    Trace.println(Trace.UTIL, "update( " + aTestGroupResult.getId() + " )", true);
-
-	    if (myResultFile == null)
-		{
-			Warning.println("Cannot update a test group file that is not yet written");
-		}
-		else
-		{
-			write( aTestGroupResult, myResultFile );			
 		}
 	}
 
@@ -190,17 +203,24 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		Hashtable<Integer, TestGroupResultLink> tgResults = aTestGroupResult.getTestGroupResultLinks();
     	for (int key = 0; key < tgResults.size(); key++)
     	{
+    		TestGroupResultLink tgResult = tgResults.get(key);
     	    aStream.write(anIndent + "  <testgrouplink");
-    		aStream.write(" id='" + tgResults.get(key).getId() + "'");
-    		aStream.write(" type='" + tgResults.get(key).getType() + "'");
-    		aStream.write(" sequence='" + tgResults.get(key).getSequenceNr() + "'");
+    		aStream.write(" id='" + tgResult.getId() + "'");
+    		aStream.write(" type='" + tgResult.getType() + "'");
+    		aStream.write(" sequence='" + tgResult.getSequenceNr() + "'");
     		aStream.write(">\n");
 
-    		aStream.write(anIndent + "    <link>");
-    		String tgLink = tgResults.get(key).getLink().getAbsolutePath();
-    		String relativeTgLink = XmlWriterUtils.makeFileRelative(tgLink, aLogDir.getAbsolutePath());
-    		aStream.write(relativeTgLink);
-    		aStream.write("</link>\n");
+    		File tgLink = tgResult.getLink();
+    		if ( tgLink != null )
+    		{
+        		aStream.write(anIndent + "    <link>");
+    			
+        		String tgLinkString = tgLink.getAbsolutePath();
+        		String relativeTgLink = XmlWriterUtils.makeFileRelative(tgLinkString, aLogDir.getAbsolutePath());
+        		aStream.write(relativeTgLink);
+
+        		aStream.write("</link>\n");
+    		}
     		
     		ResultSummary summary = tgResults.get(key).getSummary();
     		printSummary( aStream, summary, anIndent + "    " );

@@ -19,6 +19,9 @@ import org.testtoolinterfaces.utils.Warning;
 /**
  * @author Arjan Kranenburg
  *
+ * The TestRunResultXmlWriter includes a TestGroupResultXmlWriter, so we implement
+ * the TestGroupResultWriter interface as well in order to be updated of changes in 
+ * the Test Group Result inside the Test Run Result. 
  */
 public class TestRunResultXmlWriter implements TestRunResultWriter
 {
@@ -26,6 +29,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	private String myTestEnvironment = "Unknown";
 	private String myTestPhase = "Unknown";
 	private File myBaseLogDir;
+
 	private File myResultFile;
 	
 	private TestGroupResultXmlWriter myTgResultWriter;
@@ -43,7 +47,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		myXslDir = aConfiguration.getRunXslDir();
 		if (myXslDir == null)
 		{
-		throw new Error( "No directory specified." );
+			throw new Error( "No directory specified." );
 		}
 		
 		if (! myXslDir.isDirectory())
@@ -60,10 +64,43 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
 	 */
-	public void write(TestRunResult aRunResult, File aFileName)
+	public void write( TestRunResult aRunResult, File aFileName )
 	{
+	    Trace.println(Trace.UTIL);
 		myResultFile = aFileName;
 		
+		if ( aRunResult == null )
+		{
+			return;
+		}
+		writeToFile(aRunResult, aFileName);
+		
+		aRunResult.register(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultObserver#notify()
+	 */
+	public void notify( TestRunResult aRunResult )
+	{
+	    Trace.println(Trace.UTIL, "notify( " + aRunResult.getDisplayName() + " )", true);
+
+	    if (myResultFile == null)
+		{
+			Warning.println("Cannot update a test-run file that is not yet written");
+		}
+		else
+		{
+			writeToFile(aRunResult, myResultFile);
+		}
+	}
+
+	/**
+	 * @param aRunResult
+	 * @param aFileName
+	 */
+	private void writeToFile(TestRunResult aRunResult, File aFileName)
+	{
 		File logDir = aFileName.getParentFile();
         if (!logDir.exists())
         {
@@ -71,11 +108,6 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
         }
 		XmlWriterUtils.copyXsl( myXslDir, logDir );
 		myBaseLogDir = logDir;
-
-		if ( aRunResult == null )
-		{
-			return;
-		}
 
 		FileWriter xmlFile;
 		try
@@ -91,23 +123,6 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		{
 			Warning.println("Saving Test Run Result XML failed: " + e.getMessage());
 			Trace.print(Trace.LEVEL.SUITE, e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#intermediateWrite()
-	 */
-	public void update( TestRunResult aRunResult )
-	{
-	    Trace.println(Trace.UTIL, "update( " + aRunResult.getDisplayName() + " )", true);
-
-	    if (myResultFile == null)
-		{
-			Warning.println("Cannot update a test-run file that is not yet written");
-		}
-		else
-		{
-			write( aRunResult, myResultFile );			
 		}
 	}
 
