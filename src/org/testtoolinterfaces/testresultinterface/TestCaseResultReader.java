@@ -1,5 +1,6 @@
 package org.testtoolinterfaces.testresultinterface;
 
+import java.io.File;
 import java.io.IOError;
 
 import javax.xml.parsers.SAXParser;
@@ -26,6 +27,44 @@ public class TestCaseResultReader
 	{
 		Trace.println(Trace.LEVEL.SUITE, "readTcResultFile( " + aTestCaseResultLink.getId() + " )", true);
 
+		return readTcResultFile( aTestCaseResultLink.getLink() );
+
+//		// create a parser
+//        SAXParserFactory spf = SAXParserFactory.newInstance();
+//        spf.setNamespaceAware(false);
+//        TestCaseResult testCaseResult;
+//		try
+//		{
+//			SAXParser saxParser = spf.newSAXParser();
+//			XMLReader xmlReader = saxParser.getXMLReader();
+//
+//	        // create a handler
+//			TestCaseResultXmlHandler handler = new TestCaseResultXmlHandler(xmlReader);
+//
+//	        // assign the handler to the parser
+//	        xmlReader.setContentHandler(handler);
+//
+//	        // parse the document
+//	        xmlReader.parse(aTestCaseResultLink.getLink().getAbsolutePath());
+//	        
+//	        testCaseResult = handler.getTestCaseResult();
+//		}
+//		catch (Exception e)
+//		{
+//			Trace.print(Trace.SUITE, e);
+//			throw new IOError( e );
+//		}
+//
+//		return testCaseResult;
+	}
+
+	/** 
+	 * @throws IOError when reading fails
+	 */
+	public TestCaseResult readTcResultFile( File aTestCaseResultFile )
+	{
+		Trace.println(Trace.SUITE, "readTcResultFile( " + aTestCaseResultFile.getPath() + " )", true);
+
 		// create a parser
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setNamespaceAware(false);
@@ -42,7 +81,7 @@ public class TestCaseResultReader
 	        xmlReader.setContentHandler(handler);
 
 	        // parse the document
-	        xmlReader.parse(aTestCaseResultLink.getLink().getAbsolutePath());
+	        xmlReader.parse(aTestCaseResultFile.getAbsolutePath());
 	        
 	        testCaseResult = handler.getTestCaseResult();
 		}

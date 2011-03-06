@@ -13,6 +13,7 @@ import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
+import org.testtoolinterfaces.testresult.TestStepResult;
 
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.Warning;
@@ -25,6 +26,8 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 {
 	private File myXslDir;
 	private Hashtable<String, File> myResultFiles;
+	
+	private TestStepResultXmlWriter myTsResultWriter;
 	
 	public TestGroupResultXmlWriter( Configuration aConfiguration )
 	{
@@ -41,6 +44,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		}
 		
 		myResultFiles = new Hashtable<String, File>();
+		myTsResultWriter = new TestStepResultXmlWriter( );
 	}
 
 	/* (non-Javadoc)
@@ -106,8 +110,16 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 			xmlFile.write("    id='" + aTestGroupResult.getId() + "'\n");
 			xmlFile.write(">\n");			
 
-			printTestGroupLinks(aTestGroupResult, xmlFile, "", logDir);
+			xmlFile.write("  <prepare>\n");
+	    	printStepResults(xmlFile, aTestGroupResult.getPrepareResults(), logDir);
+			xmlFile.write("  </prepare>\n");
+
+	    	printTestGroupLinks(aTestGroupResult, xmlFile, "", logDir);
 			printTestCaseLinks(aTestGroupResult, xmlFile, "", logDir);
+
+			xmlFile.write("  <restore>\n");
+	    	printStepResults(xmlFile, aTestGroupResult.getRestoreResults(), logDir);
+			xmlFile.write("  </restore>\n");
 
 	    	XmlWriterUtils.printXmlLogFiles( aTestGroupResult.getLogs(), xmlFile, logDir.getAbsolutePath(), "  ");
 
@@ -135,10 +147,18 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		aStream.write(" id='" + aTestGroupResult.getId() + "'");
 		aStream.write(">\n");			
 
+		aStream.write("  <prepare>\n");
+    	printStepResults(aStream, aTestGroupResult.getPrepareResults(), aLogDir);
+    	aStream.write("  </prepare>\n");
+
 		printTestGroupLinks(aTestGroupResult, aStream, anIndent, aLogDir);
 		printTestCaseLinks(aTestGroupResult, aStream, anIndent, aLogDir);
 
-    	XmlWriterUtils.printXmlLogFiles( aTestGroupResult.getLogs(), aStream, aLogDir.getAbsolutePath(), anIndent + "  ");
+		aStream.write("  <restore>\n");
+    	printStepResults(aStream, aTestGroupResult.getRestoreResults(), aLogDir);
+    	aStream.write("  </restore>\n");
+
+		XmlWriterUtils.printXmlLogFiles( aTestGroupResult.getLogs(), aStream, aLogDir.getAbsolutePath(), anIndent + "  ");
 
 		printSummary( aStream, aTestGroupResult.getSummary(), anIndent + "  " );
 
@@ -226,6 +246,21 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
     		printSummary( aStream, summary, anIndent + "    " );
 
     	    aStream.write(anIndent + "  </testgrouplink>\n");
+    	}
+	}
+
+	/**
+	 * @param aStream
+	 * @param aStepResults
+	 * @throws IOException
+	 */
+	private void printStepResults(	OutputStreamWriter aStream,
+									Hashtable<Integer, TestStepResult> aStepResults,
+									File aLogDir ) throws IOException
+	{
+		for (int key = 0; key < aStepResults.size(); key++)
+    	{
+    		myTsResultWriter.printXml(aStepResults.get(key), aStream, aLogDir);
     	}
 	}
 

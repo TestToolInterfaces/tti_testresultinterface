@@ -115,13 +115,17 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	    	printDescription(xmlFile, aTestCaseResult.getDescription(), "");
 	    	printRequirements(xmlFile, aTestCaseResult.getRequirements(), "");
 
+	    	xmlFile.write("  <prepare>\n");
 	    	printStepResults(xmlFile, aTestCaseResult.getInitializationResults(), logDir);
+	    	xmlFile.write("  </prepare>\n");
 
 	    	xmlFile.write("  <execution>\n");
 	    	printStepResults(xmlFile, aTestCaseResult.getExecutionResults(), logDir);
 	    	xmlFile.write("  </execution>\n");
 
+	    	xmlFile.write("  <restore>\n");
 	    	printStepResults(xmlFile, aTestCaseResult.getRestoreResults(), logDir);
+	    	xmlFile.write("  </restore>\n");
 
 	    	xmlFile.write("  <result>" + aTestCaseResult.getResult().toString() + "</result>\n");
 
