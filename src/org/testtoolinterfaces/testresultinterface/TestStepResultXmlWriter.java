@@ -18,16 +18,16 @@ import org.testtoolinterfaces.utils.Trace;
  * @author arjan.kranenburg
  *
  */
-public class TestStepResultXmlWriter extends TestResultXmlWriter
+public class TestStepResultXmlWriter
 {
 	/**
 	 * @param aResult
 	 * @param anIndentLevel
 	 */
-	public TestStepResultXmlWriter(File aBaseLogDir, int anIndentLevel)
+	public TestStepResultXmlWriter()
 	{
-		super(aBaseLogDir, anIndentLevel);
 		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+
 	}
 
 	/**
@@ -36,37 +36,39 @@ public class TestStepResultXmlWriter extends TestResultXmlWriter
 	 * 
 	 * @throws IOException 
 	 */
-	public void printXml(TestStepResult aResult, OutputStreamWriter aStream) throws IOException
+	public void printXml( TestStepResult aResult,
+	                      OutputStreamWriter aStream,
+	                      File aLogDir) throws IOException
 	{
 		Trace.println(Trace.LEVEL.UTIL);
 		String tag = aResult.getType().toString();
-		aStream.write("          <" + tag);
+		aStream.write("    <" + tag);
 		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
 		aStream.write(">\n");
 
 		String description = aResult.getDescription();
-    	aStream.write("        <description>");
+    	aStream.write("      <description>");
     	aStream.write(description);
     	aStream.write("</description>\n");
 	    
     	String command = aResult.getCommand();
-    	if ( ! command.isEmpty() ) { aStream.write("            <command>" + command + "</command>\n"); }
+    	if ( ! command.isEmpty() ) { aStream.write("      <command>" + command + "</command>\n"); }
     	String script = aResult.getScript();
-    	if ( ! script.isEmpty() ) { aStream.write("            <script>" + script + "</script>\n"); }
-    	aStream.write("            <result>" + aResult.getResult().toString() + "</result>\n");
+    	if ( ! script.isEmpty() ) { aStream.write("      <script>" + script + "</script>\n"); }
+    	aStream.write("      <result>" + aResult.getResult().toString() + "</result>\n");
     	ParameterArrayList parameters = aResult.getParameters();
     	ArrayList<Parameter> params = parameters.sort();
     	for(int i=0; i<params.size(); i++)
     	{
     		Parameter param = params.get(i);
-        	aStream.write("            <parameter id='" + param.getName()
+        	aStream.write("      <parameter id='" + param.getName()
         	              + "' type='" + param.getValueType().getSimpleName()
         	              + "' sequence='" + param.getIndex()
         	              + "'>"
         	              + param.getValue().toString() + "</parameter>\n");
     	}
 
-	    printXmlLogFiles(aResult, aStream);
-		aStream.write("          </" + tag + ">\n");
+    	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
+		aStream.write("      </" + tag + ">\n");
 	}
 }

@@ -39,13 +39,13 @@ public class ExecutionResultXmlHandler extends XmlHandler
 
     	this.reset();
 
-    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.ActionType.action);
-		this.addStartElementHandler(TestStep.ActionType.action.toString(), myActionXmlHandler);
-		myActionXmlHandler.addEndElementHandler(TestStep.ActionType.action.toString(), this);
+    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
+		this.addStartElementHandler(TestStep.StepType.action.toString(), myActionXmlHandler);
+		myActionXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
 
-		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.ActionType.check);
-		this.addStartElementHandler(TestStep.ActionType.check.toString(), myCheckXmlHandler);
-		myCheckXmlHandler.addEndElementHandler(TestStep.ActionType.check.toString(), this);
+		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.check);
+		this.addStartElementHandler(TestStep.StepType.check.toString(), myCheckXmlHandler);
+		myCheckXmlHandler.addEndElementHandler(TestStep.StepType.check.toString(), this);
 	}
 
     public void processElementAttributes(String qualifiedName, Attributes att)
@@ -81,12 +81,12 @@ public class ExecutionResultXmlHandler extends XmlHandler
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
 		Trace.println(Trace.LEVEL.SUITE);
-    	if (aQualifiedName.equalsIgnoreCase(TestStep.ActionType.action.toString()))
+    	if (aQualifiedName.equalsIgnoreCase(TestStep.StepType.action.toString()))
     	{
     		mySteps.add(myActionXmlHandler.getActionStep());
     		myActionXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(TestStep.ActionType.check.toString()))
+    	if (aQualifiedName.equalsIgnoreCase(TestStep.StepType.check.toString()))
     	{
     		mySteps.add(myCheckXmlHandler.getActionStep());
     		myCheckXmlHandler.reset();

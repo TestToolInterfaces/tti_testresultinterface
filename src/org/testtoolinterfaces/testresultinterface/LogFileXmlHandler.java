@@ -9,12 +9,12 @@ import org.testtoolinterfaces.utils.XmlHandler;
 /**
  * @author Arjan Kranenburg 
  * 
- * <logFile type="...">...</logFile>
+ * <logfile type="...">...</logfile>
  * 
  */
 public class LogFileXmlHandler extends XmlHandler
 {
-	public static final String START_ELEMENT = "logFile";
+	public static final String START_ELEMENT = "logfile";
 	public static final String PARAM_TYPE = "type";
 	
     private String myType = "";
