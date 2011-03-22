@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="testcase.xsl"?>
+
+<testcase
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="TestResult_Case.xsd"
+    xsdMain='0'
+    xsdSub='2'
+    xsdPatch='0'
+    id='tc_001'
+    sequence='0'
+>
+  <description>Test Case description</description>
+  <prepare>
+      <action sequence='0'>
+        <command>login to rhodos-zone2</command>
+        <result>PASSED</result>
+      </action>
+  </prepare>
+  <execute>
+      <check sequence='1'>
+        <command>waitForElement //a[@id='i_save']</command>
+        <result>PASSED</result>
+      </check>
+      <check sequence='2'>
+        <command>waitForElement //div[@id='listitems']/div[1]/table/tbody/tr/td[7]</command>
+        <result>PASSED</result>
+      </check>
+      <check sequence='3'>
+        <command>waitForElement //div[@id='listitems']/div[1]/table/tbody/tr/td[5]/div/img[@title='Current Status: Active']</command>
+        <result>PASSED</result>
+      </check>
+      <check sequence='4'>
+        <command>waitForElement //a[@id='i_save']</command>
+        <result>PASSED</result>
+      </check>
+      <check sequence='5'>
+        <command>Add AO Counting Rule</command>
+        <result>PASSED</result>
+      </check>
+  </execute>
+  <restore>
+      <action sequence='4'>
+        <command>Property 'Name' has value AOC_Rule1</command>
+        <result>PASSED</result>
+      </action>
+      <action sequence='5'>
+        <command>Property 'PriorityCondition' has value </command>
+        <result>PASSED</result>
+      </action>
+      <action sequence='6'>
+        <command>waitForText //div[@id='listitems']/div[1]/div=Item #: 1 - Deletion ok.</command>
+        <result>PASSED</result>
+      </action>
+      <action sequence='7'>
+        <command>Removed AOC Rule</command>
+        <result>PASSED</result>
+      </action>
+  </restore>
+  <result>PASSED</result>
+  <comment>The test result was checked and found OK by Arjan.</comment>
+</testcase>

@@ -9,7 +9,6 @@ import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.TestCase;
 import org.testtoolinterfaces.testsuite.TestCaseImpl;
-import org.testtoolinterfaces.testsuite.TestStep;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -33,9 +32,9 @@ import org.testtoolinterfaces.utils.XmlHandler;
  *   ...
  *  </restore>
  *  <result>...</result>
- *  <logfiles>
+ *  <logfile>
  *  ...
- *  </logfiles>
+ *  </logfile>
  *  <comment>...</comment>
  * </testcase>
  */
@@ -46,24 +45,33 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	public static final String ELEMENT_ID = "id";
 	public static final String ELEMENT_SEQUENCE = "sequence";
 	
-	private String myCurrentTestCaseId = "";
-	private int myCurrentSequence = 0;
-	private TestResult.VERDICT myResult = TestResult.UNKNOWN;
-	private String myComment = "";
+	private String myTestCaseId;
+	private int mySequence;
+	private String myDescription;
+	private ArrayList<String> myRequirements;
+	private TestResult.VERDICT myResult;
+	private String myComment;
 	private Hashtable<String, String> myLogFiles;
 
-    private ArrayList<TestStepResult> myInitializationSteps;
+    private ArrayList<TestStepResult> myPrepareSteps;
     private ArrayList<TestStepResult> myExecutionSteps;
     private ArrayList<TestStepResult> myRestoreSteps;
 
+	private static final String DESCRIPTION_ELEMENT = "description";
+	private static final String ELEMENT_REQUIREMENT = "requirement";
+	private static final String PREPARE_ELEMENT = "prepare";
+	private static final String EXECUTE_ELEMENT = "execute";
+	private static final String RESTORE_ELEMENT = "restore";
 	private static final String RESULT_ELEMENT = "result";
 	private static final String COMMENT_ELEMENT = "comment";
 
-	private ActionTypeResultXmlHandler myInitializeResultXmlHandler;
-	private ExecutionResultXmlHandler myExecutionResultXmlHandler;
-	private ActionTypeResultXmlHandler myRestoreResultXmlHandler;
+	private GenericTagAndStringXmlHandler myDescriptionXmlHandler;
+	private GenericTagAndStringXmlHandler myRequirementIdXmlHandler;
+	private TestStepSequenceResultXmlHandler myPrepareResultXmlHandler;
+	private TestStepSequenceResultXmlHandler myExecutionResultXmlHandler;
+	private TestStepSequenceResultXmlHandler myRestoreResultXmlHandler;
 	private GenericTagAndStringXmlHandler myResultXmlHandler;
-	private LogFilesXmlHandler myLogFilesXmlHandler;
+	private LogFileXmlHandler myLogFileXmlHandler;
 	private GenericTagAndStringXmlHandler myCommentXmlHandler;
 
 	/**
@@ -76,29 +84,37 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	public TestCaseResultXmlHandler( XMLReader anXmlReader )
 	{
 		super(anXmlReader, START_ELEMENT);
-		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+		Trace.println(Trace.CONSTRUCTOR);
 
 		this.reset();
 
-		myInitializeResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
-		this.addStartElementHandler(TestStep.StepType.action.toString(), myInitializeResultXmlHandler);
-		myInitializeResultXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
+		myDescriptionXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, DESCRIPTION_ELEMENT);
+		this.addStartElementHandler(DESCRIPTION_ELEMENT, myDescriptionXmlHandler);
+		myDescriptionXmlHandler.addEndElementHandler(DESCRIPTION_ELEMENT, this);
 
-		myExecutionResultXmlHandler = new ExecutionResultXmlHandler(anXmlReader);
-		this.addStartElementHandler(ExecutionResultXmlHandler.START_ELEMENT, myExecutionResultXmlHandler);
-		myExecutionResultXmlHandler.addEndElementHandler(ExecutionResultXmlHandler.START_ELEMENT, this);
+     	myRequirementIdXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_REQUIREMENT);
+		this.addStartElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
+		myRequirementIdXmlHandler.addEndElementHandler(ELEMENT_REQUIREMENT, this);
 
-		myRestoreResultXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
-		this.addStartElementHandler(TestStep.StepType.action.toString(), myRestoreResultXmlHandler);
-		myRestoreResultXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
+		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, PREPARE_ELEMENT);
+		this.addStartElementHandler(PREPARE_ELEMENT, myPrepareResultXmlHandler);
+		myPrepareResultXmlHandler.addEndElementHandler(PREPARE_ELEMENT, this);
+
+		myExecutionResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, EXECUTE_ELEMENT);
+		this.addStartElementHandler(EXECUTE_ELEMENT, myExecutionResultXmlHandler);
+		myExecutionResultXmlHandler.addEndElementHandler(EXECUTE_ELEMENT, this);
+
+		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, RESTORE_ELEMENT);
+		this.addStartElementHandler(RESTORE_ELEMENT, myRestoreResultXmlHandler);
+		myRestoreResultXmlHandler.addEndElementHandler(RESTORE_ELEMENT, this);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
 		this.addStartElementHandler(RESULT_ELEMENT, myResultXmlHandler);
 		myResultXmlHandler.addEndElementHandler(RESULT_ELEMENT, this);
 
-		myLogFilesXmlHandler = new LogFilesXmlHandler(anXmlReader);
-		this.addStartElementHandler(LogFilesXmlHandler.START_ELEMENT, myLogFilesXmlHandler);
-		myLogFilesXmlHandler.addEndElementHandler(LogFilesXmlHandler.START_ELEMENT, this);
+		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
+		this.addStartElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		myLogFileXmlHandler.addEndElementHandler(LogFileXmlHandler.START_ELEMENT, this);
 
 		myCommentXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMENT_ELEMENT);
 		this.addStartElementHandler(COMMENT_ELEMENT, myCommentXmlHandler);
@@ -116,11 +132,11 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	    		Trace.print( Trace.LEVEL.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ELEMENT_ID))
 		    	{
-		        	myCurrentTestCaseId = att.getValue(i);
+		        	myTestCaseId = att.getValue(i);
 		    	}
 		    	if (att.getQName(i).equalsIgnoreCase(ELEMENT_SEQUENCE))
 		    	{
-		    		myCurrentSequence = Integer.valueOf( att.getValue(i) ).intValue();
+		    		mySequence = Integer.valueOf( att.getValue(i) ).intValue();
 		    	}
 		    }
     	}
@@ -134,15 +150,15 @@ public class TestCaseResultXmlHandler extends XmlHandler
     {
 		Trace.println(Trace.LEVEL.SUITE);
 
-		if ( myCurrentTestCaseId.isEmpty() )
+		if ( myTestCaseId.isEmpty() )
 		{
 			throw new SAXParseException("Unknown TestCase ID", new LocatorImpl());
 		}
 
-		TestCase testCase = new TestCaseImpl( myCurrentTestCaseId,
+		TestCase testCase = new TestCaseImpl( myTestCaseId,
 	                                          new Hashtable<String, String>(),
-       										  "",
-       										  new ArrayList<String>(),   // Requirements are not read.
+	                                          myDescription,
+	                                          myRequirements,
        										  null,
        										  null,
        										  null,
@@ -170,9 +186,9 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		    }
       	}
 
-	    for (int key = 0; key < myInitializationSteps.size() ; key++)
+	    for (int key = 0; key < myPrepareSteps.size() ; key++)
 	    {
-	    	testCaseResult.addInitialization( myInitializationSteps.get(key) );
+	    	testCaseResult.addInitialization( myPrepareSteps.get(key) );
 	    }
 
 	    for (int key = 0; key < myExecutionSteps.size() ; key++)
@@ -190,22 +206,24 @@ public class TestCaseResultXmlHandler extends XmlHandler
 
 	public int getSequence()
 	{
-		Trace.println(Trace.GETTER, "getSequence() -> " + myCurrentSequence, true);
-		return myCurrentSequence;
+		Trace.println(Trace.GETTER, "getSequence() -> " + mySequence, true);
+		return mySequence;
 	}
 
 	public void reset()
 	{
 		Trace.println(Trace.SUITE);
 
-		myCurrentTestCaseId = "";
-		myCurrentSequence = 0;
+		myTestCaseId = "";
+		mySequence = 0;
+		myDescription = "";
+		myRequirements = new ArrayList<String>();
 		myResult = TestResult.UNKNOWN;
 		myComment = "";
 
 		myLogFiles = new Hashtable<String, String>();
 
-		myInitializationSteps = new ArrayList<TestStepResult>();
+		myPrepareSteps = new ArrayList<TestStepResult>();
 		myExecutionSteps = new ArrayList<TestStepResult>();
 		myRestoreSteps = new ArrayList<TestStepResult>();
 	}
@@ -239,35 +257,46 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	@Override
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.LEVEL.SUITE);
-    	if (aQualifiedName.equalsIgnoreCase(myInitializeResultXmlHandler.getStartElement()))
+		Trace.println(Trace.SUITE);
+    	if (aQualifiedName.equalsIgnoreCase(DESCRIPTION_ELEMENT))
     	{
-    		myInitializationSteps.add( myInitializeResultXmlHandler.getActionStep() );
-    		myInitializeResultXmlHandler.reset();
+    		myDescription = myDescriptionXmlHandler.getValue();
+    		myDescriptionXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(ExecutionResultXmlHandler.START_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(ELEMENT_REQUIREMENT))
     	{
-    		myExecutionSteps = myExecutionResultXmlHandler.getExecutionSteps();
+    		myRequirements.add( myRequirementIdXmlHandler.getValue() );
+    		myRequirementIdXmlHandler.reset();
+    	}
+    	else if (aQualifiedName.equalsIgnoreCase(PREPARE_ELEMENT))
+    	{
+    		myPrepareSteps = myPrepareResultXmlHandler.getStepSequence();
+    		myPrepareResultXmlHandler.reset();
+    	}
+    	else if (aQualifiedName.equalsIgnoreCase(EXECUTE_ELEMENT))
+    	{
+    		myExecutionSteps = myExecutionResultXmlHandler.getStepSequence();
     		myExecutionResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(myRestoreResultXmlHandler.getStartElement()))
+    	else if (aQualifiedName.equalsIgnoreCase(RESTORE_ELEMENT))
     	{
-    		myInitializationSteps.add( myRestoreResultXmlHandler.getActionStep() );
+    		myRestoreSteps = myRestoreResultXmlHandler.getStepSequence() ;
     		myRestoreResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
     	{
      		myResult = TestResult.VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
      		myResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(COMMENT_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(COMMENT_ELEMENT))
     	{
     		myComment = myCommentXmlHandler.getValue();
     		myCommentXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(LogFilesXmlHandler.START_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(LogFileXmlHandler.START_ELEMENT))
     	{
-    		myLogFiles = myLogFilesXmlHandler.getLogFiles();
+    		myLogFiles.put(myLogFileXmlHandler.getType(), myLogFileXmlHandler.getValue());
+    		myLogFileXmlHandler.reset();
     	}
 	}
 }

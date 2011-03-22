@@ -4,7 +4,7 @@
 	<target name="CreateJarFile">
 
 		<delete file="../TestResultInterface.jar"/>
-		<property name="version.num" value="0.2.0"/>
+		<property name="version.num" value="0.2.1"/>
 	    <buildnumber file="build.num"/>
 		<jar destfile="../TestResultInterface.jar" duplicate="preserve" index="true">
 			<zipfileset dir="bin" prefix="" />

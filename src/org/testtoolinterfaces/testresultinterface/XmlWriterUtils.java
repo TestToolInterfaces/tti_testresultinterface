@@ -50,7 +50,6 @@ public class XmlWriterUtils
 
       	if (!aLogs.isEmpty())
       	{
-      		aStream.write(anIndent + "<logfiles>\n");
 		    for (Enumeration<String> keys = aLogs.keys(); keys.hasMoreElements();)
 		    {
 		    	String key = keys.nextElement();
@@ -62,7 +61,6 @@ public class XmlWriterUtils
 		    	aStream.write("</logfile>\n");
 		    }
   
-		    aStream.write(anIndent + "</logfiles>\n");
       	}
 	}
 

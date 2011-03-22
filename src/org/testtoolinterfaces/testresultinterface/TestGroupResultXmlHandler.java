@@ -41,9 +41,9 @@ import org.xml.sax.helpers.LocatorImpl;
  *  <summary>
  *   ...
  *  </summary>
- *  <logfiles>
+ *  <logfile>
  *  ...
- *  </logfiles>
+ *  </logfile>
  *  <[any]>...</[any]>
  * </testgroup>
  */
@@ -62,10 +62,12 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	private static final String ELEMENT_PREPARE = "prepare";
 	private static final String ELEMENT_RESTORE = "restore";
 
-	private String myTestGroupId = "";
-	private int myCurrentSequence = 0;
-	private TestResult.VERDICT myResult = TestResult.UNKNOWN;
-	private String myComment = "";
+	private String myTestGroupId;
+	private int myCurrentSequence;
+	private String myDescription;
+	private ArrayList<String> myRequirements;
+	private TestResult.VERDICT myResult;
+	private String myComment;
 	private Hashtable<String, String> myLogFiles;
 
     private ArrayList<TestStepResult> myPrepareSteps;
@@ -81,7 +83,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	private TestGroupResultLinkXmlHandler myTestGroupResulLinkXmlHandler;
 	private TestStepSequenceResultXmlHandler myRestoreResultXmlHandler;
 	private SummaryResultXmlHandler mySummaryXmlHandler;
-	private LogFilesXmlHandler myLogFilesXmlHandler;
+	private LogFileXmlHandler myLogFileXmlHandler;
 
 	/**
 	 * @param anXmlReader the xmlReader
@@ -93,7 +95,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	public TestGroupResultXmlHandler( XMLReader anXmlReader )
 	{
 		super(anXmlReader, START_ELEMENT);
-		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+		Trace.println(Trace.CONSTRUCTOR);
 
 		this.reset();
 
@@ -125,9 +127,9 @@ public class TestGroupResultXmlHandler extends XmlHandler
 		this.addStartElementHandler(SummaryResultXmlHandler.ELEMENT_START, mySummaryXmlHandler);
 		mySummaryXmlHandler.addEndElementHandler(SummaryResultXmlHandler.ELEMENT_START, this);
 
-		myLogFilesXmlHandler = new LogFilesXmlHandler(anXmlReader);
-		this.addStartElementHandler(LogFilesXmlHandler.START_ELEMENT, myLogFilesXmlHandler);
-		myLogFilesXmlHandler.addEndElementHandler(LogFilesXmlHandler.START_ELEMENT, this);
+		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
+		this.addStartElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		myLogFileXmlHandler.addEndElementHandler(LogFileXmlHandler.START_ELEMENT, this);
 	}
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
@@ -146,7 +148,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 // TODO startdate, starttime, etc.
 		    }
     	}
-		Trace.println( Trace.LEVEL.SUITE, " )" );
+		Trace.println( Trace.SUITE, " )" );
     }
     
     /**
@@ -154,7 +156,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
      */
     public TestGroupResult getTestGroupResult() throws SAXParseException
     {
-		Trace.println(Trace.LEVEL.SUITE);
+		Trace.println(Trace.SUITE);
 
 		if ( myTestGroupId.isEmpty() )
 		{
@@ -163,8 +165,8 @@ public class TestGroupResultXmlHandler extends XmlHandler
 
 		TestGroup testGroup = new TestGroupImpl( myTestGroupId,
 	                                          new Hashtable<String, String>(),
-       										  "",
-       										  new ArrayList<String>(),   // Requirements are not read.
+	                                          myDescription,
+	                                          myRequirements,
        										  null,
        										  null,
        										  null,
@@ -218,6 +220,8 @@ public class TestGroupResultXmlHandler extends XmlHandler
 
 		myTestGroupId = "";
 		myCurrentSequence = 0;
+		myDescription = "";
+		myRequirements = new ArrayList<String>();
 		myResult = TestResult.UNKNOWN;
 		myComment = "";
 
@@ -258,31 +262,41 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	@Override
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
-		//TODO description, requirements, etc
-		Trace.println(Trace.LEVEL.SUITE);
-    	if (aQualifiedName.equalsIgnoreCase(myPrepareResultXmlHandler.getStartElement()))
+		Trace.println(Trace.SUITE);
+    	if (aQualifiedName.equalsIgnoreCase(ELEMENT_DESCRIPTION))
+    	{
+    		myDescription = myDescriptionXmlHandler.getValue();
+    		myDescriptionXmlHandler.reset();
+    	}
+    	else if (aQualifiedName.equalsIgnoreCase(ELEMENT_REQUIREMENT))
+    	{
+    		myRequirements.add( myRequirementIdXmlHandler.getValue() );
+    		myRequirementIdXmlHandler.reset();
+    	}
+    	else if (aQualifiedName.equalsIgnoreCase(ELEMENT_PREPARE))
     	{
     		myPrepareSteps = myPrepareResultXmlHandler.getStepSequence();
     		myPrepareResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(TestCaseResultLinkXmlHandler.ELEMENT_START))
+    	else if (aQualifiedName.equalsIgnoreCase(TestCaseResultLinkXmlHandler.ELEMENT_START))
     	{
     		myTestCaseResultLinks.add( myTestCaseResultLinkXmlHandler.getTestCaseResultLink() );
     		myTestCaseResultLinkXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(TestGroupResultLinkXmlHandler.ELEMENT_START))
+    	else if (aQualifiedName.equalsIgnoreCase(TestGroupResultLinkXmlHandler.ELEMENT_START))
     	{
     		myTestGroupResultLinks.add( myTestGroupResulLinkXmlHandler.getTestGroupResultLink() );
     		myTestGroupResulLinkXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(myRestoreResultXmlHandler.getStartElement()))
+    	else if (aQualifiedName.equalsIgnoreCase(ELEMENT_RESTORE))
     	{
     		myRestoreSteps = myRestoreResultXmlHandler.getStepSequence();
     		myRestoreResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(LogFilesXmlHandler.START_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(LogFileXmlHandler.START_ELEMENT))
     	{
-    		myLogFiles = myLogFilesXmlHandler.getLogFiles();
+    		myLogFiles.put(myLogFileXmlHandler.getType(), myLogFileXmlHandler.getValue());
+    		myLogFileXmlHandler.reset();
     	}
 	}
 }

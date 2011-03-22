@@ -37,7 +37,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
 	private GenericTagAndStringXmlHandler myCommandXmlHandler;
 	private GenericTagAndStringXmlHandler myResultXmlHandler;
-	private LogFilesXmlHandler myLogFilesXmlHandler;
+	private LogFileXmlHandler myLogFileXmlHandler;
 
 	private int myCurrentSequence = 0;
 	private String myCommand = "";
@@ -57,9 +57,9 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		this.addStartElementHandler(RESULT_ELEMENT, myResultXmlHandler);
 		myResultXmlHandler.addEndElementHandler(RESULT_ELEMENT, this);
 
-		myLogFilesXmlHandler = new LogFilesXmlHandler(anXmlReader);
-		this.addStartElementHandler(LogFilesXmlHandler.START_ELEMENT, myLogFilesXmlHandler);
-		myLogFilesXmlHandler.addEndElementHandler(LogFilesXmlHandler.START_ELEMENT, this);
+		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
+		this.addStartElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		myLogFileXmlHandler.addEndElementHandler(LogFileXmlHandler.START_ELEMENT, this);
 	}
 
     public void processElementAttributes(String aQualifiedName, Attributes att)
@@ -111,15 +111,15 @@ public class ActionTypeResultXmlHandler extends XmlHandler
     		myCommand = myCommandXmlHandler.getValue();
     		myCommandXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
     	{
     		myResult = TestResult.VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
     		myResultXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(LogFilesXmlHandler.START_ELEMENT))
+    	else if (aQualifiedName.equalsIgnoreCase(LogFileXmlHandler.START_ELEMENT))
     	{
-    		myLogFiles = myLogFilesXmlHandler.getLogFiles();
-    		myLogFilesXmlHandler.reset();
+    		myLogFiles.put(myLogFileXmlHandler.getType(), myLogFileXmlHandler.getValue());
+    		myLogFileXmlHandler.reset();
     	}
 	}
 
@@ -145,7 +145,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
 	public void reset()
 	{
-		Trace.println(Trace.LEVEL.SUITE);
+		Trace.println(Trace.SUITE);
 		myCurrentSequence = 0;
 	}
 }

@@ -69,6 +69,6 @@ public class TestStepResultXmlWriter
     	}
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
-		aStream.write("      </" + tag + ">\n");
+		aStream.write("    </" + tag + ">\n");
 	}
 }
