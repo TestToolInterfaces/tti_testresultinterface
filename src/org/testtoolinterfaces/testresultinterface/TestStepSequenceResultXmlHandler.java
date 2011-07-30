@@ -7,7 +7,6 @@ import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public class TestStepSequenceResultXmlHandler extends XmlHandler
@@ -35,19 +34,19 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 	}
 
 	@Override
-	public void handleCharacters(String aValue) throws SAXParseException
+	public void handleCharacters(String aValue)
 	{
     	//nop
 	}
 
 	@Override
-	public void handleEndElement(String aQualifiedName) throws SAXParseException
+	public void handleEndElement(String aQualifiedName)
 	{
     	//nop
 	}
 
 	@Override
-	public void handleGoToChildElement(String aQualifiedName) throws SAXParseException
+	public void handleGoToChildElement(String aQualifiedName)
 	{
     	//nop
 	}
@@ -70,13 +69,13 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 	}
 
 	@Override
-	public void handleStartElement(String aQualifiedName) throws SAXParseException
+	public void handleStartElement(String aQualifiedName)
 	{
     	//nop
 	}
 
 	@Override
-	public void processElementAttributes(String qualifiedName, Attributes att) throws SAXParseException
+	public void processElementAttributes(String qualifiedName, Attributes att)
 	{
     	//nop
 	}

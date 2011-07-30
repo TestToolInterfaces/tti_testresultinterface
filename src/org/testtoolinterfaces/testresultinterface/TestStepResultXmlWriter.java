@@ -26,7 +26,7 @@ public class TestStepResultXmlWriter
 	 */
 	public TestStepResultXmlWriter()
 	{
-		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+		Trace.println(Trace.CONSTRUCTOR);
 
 	}
 
@@ -40,7 +40,7 @@ public class TestStepResultXmlWriter
 	                      OutputStreamWriter aStream,
 	                      File aLogDir) throws IOException
 	{
-		Trace.println(Trace.LEVEL.UTIL);
+		Trace.println(Trace.UTIL);
 		String tag = aResult.getType().toString();
 		aStream.write("    <" + tag);
 		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
@@ -53,9 +53,12 @@ public class TestStepResultXmlWriter
 	    
     	String command = aResult.getCommand();
     	if ( ! command.isEmpty() ) { aStream.write("      <command>" + command + "</command>\n"); }
+
     	String script = aResult.getScript();
     	if ( ! script.isEmpty() ) { aStream.write("      <script>" + script + "</script>\n"); }
+
     	aStream.write("      <result>" + aResult.getResult().toString() + "</result>\n");
+
     	ParameterArrayList parameters = aResult.getParameters();
     	ArrayList<Parameter> params = parameters.sort();
     	for(int i=0; i<params.size(); i++)
@@ -67,6 +70,9 @@ public class TestStepResultXmlWriter
         	              + "'>"
         	              + param.getValue().toString() + "</parameter>\n");
     	}
+
+    	String comment = aResult.getComment();
+    	if ( ! comment.isEmpty() ) { aStream.write("      <comment>" + comment + "</comment>\n"); }
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
 		aStream.write("    </" + tag + ">\n");

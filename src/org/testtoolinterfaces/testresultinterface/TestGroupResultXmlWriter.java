@@ -131,7 +131,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		catch (IOException exception)
 		{
 			Warning.println("Saving Test Group Result XML failed: " + exception.getMessage());
-			Trace.print(Trace.LEVEL.SUITE, exception);
+			Trace.print(Trace.SUITE, exception);
 		}
 	}
 
@@ -186,23 +186,28 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	    Hashtable<Integer, TestCaseResultLink> tcResults = aTestGroupResult.getTestCaseResultLinks();
     	for (int key = 0; key < tcResults.size(); key++)
     	{
+    		TestCaseResultLink tcResultLink = tcResults.get(key);
     	    aStream.write(anIndent + "  <testcaselink");
-    		aStream.write(" id='" + tcResults.get(key).getId() + "'");
-    		aStream.write(" type='" + tcResults.get(key).getType() + "'");
-    		aStream.write(" sequence='" + tcResults.get(key).getSequenceNr() + "'");
+    		aStream.write(" id='" + tcResultLink.getId() + "'");
+    		aStream.write(" type='" + tcResultLink.getType() + "'");
+    		aStream.write(" sequence='" + tcResultLink.getSequenceNr() + "'");
     		aStream.write(">\n");
 
     		aStream.write(anIndent + "    <link>");
-    		String tcLink = tcResults.get(key).getLink().getAbsolutePath();
+    		String tcLink = tcResultLink.getLink().getAbsolutePath();
     		String relativeTcLink = XmlWriterUtils.makeFileRelative(tcLink, aLogDir.getAbsolutePath());
     		aStream.write(relativeTcLink);
     		aStream.write("</link>\n");
     		
     		aStream.write(anIndent + "    <verdict>");
-    		aStream.write(tcResults.get(key).getResult().toString());
+    		aStream.write(tcResultLink.getResult().toString());
     		aStream.write("</verdict>\n");
     		
-    	    aStream.write(anIndent + "  </testcaselink>\n");
+    		aStream.write(anIndent + "    <comment>");
+    		aStream.write(tcResultLink.getComment());
+    		aStream.write("</comment>\n");
+
+    		aStream.write(anIndent + "  </testcaselink>\n");
     	}
 	}
 

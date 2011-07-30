@@ -138,7 +138,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 		catch (IOException exception)
 		{
 			Warning.println("Saving Test Case Result XML failed: " + exception.getMessage());
-			Trace.print(Trace.LEVEL.SUITE, exception);
+			Trace.print(Trace.SUITE, exception);
 		}
 	}
 

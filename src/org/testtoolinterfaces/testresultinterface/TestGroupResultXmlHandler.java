@@ -140,7 +140,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.LEVEL.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ATTRIBUTE_ID))
 		    	{
 		        	myTestGroupId = att.getValue(i);

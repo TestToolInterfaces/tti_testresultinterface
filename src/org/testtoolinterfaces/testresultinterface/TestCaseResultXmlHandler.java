@@ -123,13 +123,13 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
-		Trace.print(Trace.LEVEL.SUITE, "processElementAttributes( " 
+		Trace.print(Trace.SUITE, "processElementAttributes( " 
 	            + aQualifiedName, true );
     	if (aQualifiedName.equalsIgnoreCase(TestCaseResultXmlHandler.START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.LEVEL.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ELEMENT_ID))
 		    	{
 		        	myTestCaseId = att.getValue(i);
@@ -140,7 +140,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		    	}
 		    }
     	}
-		Trace.println( Trace.LEVEL.SUITE, " )" );
+		Trace.println( Trace.SUITE, " )" );
     }
     
     /**
@@ -148,7 +148,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
      */
     public TestCaseResult getTestCaseResult() throws SAXParseException
     {
-		Trace.println(Trace.LEVEL.SUITE);
+		Trace.println(Trace.SUITE);
 
 		if ( myTestCaseId.isEmpty() )
 		{

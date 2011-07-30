@@ -16,7 +16,7 @@ public class TestGroupResultReader
 	 */
 	public TestGroupResultReader()
 	{
-		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+		Trace.println(Trace.CONSTRUCTOR);
 	}
 
 	/** 

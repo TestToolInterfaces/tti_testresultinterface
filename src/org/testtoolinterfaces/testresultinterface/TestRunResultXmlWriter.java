@@ -122,7 +122,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		catch (IOException e)
 		{
 			Warning.println("Saving Test Run Result XML failed: " + e.getMessage());
-			Trace.print(Trace.LEVEL.SUITE, e);
+			Trace.print(Trace.SUITE, e);
 		}
 	}
 
@@ -218,7 +218,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	 */
 	public void printXmlLogFiles(Hashtable<String, String> aLogs, OutputStreamWriter aStream) throws IOException
 	{
-	    Trace.println(Trace.LEVEL.UTIL);
+	    Trace.println(Trace.UTIL);
 		
       	if (!aLogs.isEmpty())
       	{

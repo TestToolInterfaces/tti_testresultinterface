@@ -73,7 +73,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		    	if (att.getQName(i).equalsIgnoreCase(PARAM_SEQUENCE))
 		    	{
 		    		myCurrentSequence = Integer.valueOf( att.getValue(i) ).intValue();
-		    		Trace.println( Trace.LEVEL.ALL, "        myCurrentSequence -> " + myCurrentSequence);
+		    		Trace.println( Trace.ALL, "        myCurrentSequence -> " + myCurrentSequence);
     	    	}
 		    }
     	}
@@ -128,7 +128,12 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		Trace.println(Trace.SUITE);
 
 		TestStep.StepType action = TestStep.StepType.valueOf(this.getStartElement());
-		TestStepSimple testStep = new TestStepCommand( action, myCurrentSequence, "", myCommand, "", new ParameterArrayList() );
+		TestStepSimple testStep = new TestStepCommand( action,
+		                                               myCurrentSequence,
+		                                               "", // Description
+		                                               myCommand,
+		                                               null, // TestInterface
+		                                               new ParameterArrayList() );
 		TestStepResult testStepResult = new TestStepResult( testStep );
 		testStepResult.setResult( myResult );
       	if (!myLogFiles.isEmpty())

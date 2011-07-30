@@ -1,13 +1,10 @@
 package org.testtoolinterfaces.testresultinterface;
 
-import java.io.File;
-
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -133,31 +130,31 @@ public class SummaryResultXmlHandler extends XmlHandler
 	}
 
 	@Override
-	public void handleCharacters(String aValue) throws SAXParseException
+	public void handleCharacters(String aValue)
 	{
 		// NOP
 	}
 
 	@Override
-	public void handleEndElement(String aQualifiedName) throws SAXParseException
+	public void handleEndElement(String aQualifiedName)
 	{
 		// NOP
 	}
 
 	@Override
-	public void handleGoToChildElement(String aQualifiedName) throws SAXParseException
+	public void handleGoToChildElement(String aQualifiedName)
 	{
 		// NOP
 	}
 
 	@Override
-	public void handleStartElement(String aQualifiedName) throws SAXParseException
+	public void handleStartElement(String aQualifiedName)
 	{
 		// NOP
 	}
 
 	@Override
-	public void processElementAttributes(String qualifiedName, Attributes att) throws SAXParseException
+	public void processElementAttributes(String qualifiedName, Attributes att)
 	{
 		// NOP
 	}

@@ -10,7 +10,6 @@ import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -81,7 +80,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 	}
 
 	@Override
-	public void processElementAttributes(String aQualifiedName, Attributes att)	throws SAXParseException
+	public void processElementAttributes(String aQualifiedName, Attributes att)
 	{
 		Trace.print(Trace.SUITE, "processElementAttributes( " + aQualifiedName + ", attributes )", true );
 
@@ -89,7 +88,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.LEVEL.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ATTRIBUTE_ID))
 		    	{
 		    		myTestCaseId = att.getValue(i);
@@ -105,7 +104,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		    }
     	}
 
-    	Trace.println( Trace.LEVEL.SUITE, " )" );
+    	Trace.println( Trace.SUITE, " )" );
 	}
 
 	public TestCaseResultLink getTestCaseResultLink()
@@ -128,27 +127,25 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 	}
 
 	@Override
-	public void handleCharacters(String aValue) throws SAXParseException
+	public void handleCharacters(String aValue)
 	{
 		// NOP
 	}
 
 	@Override
 	public void handleEndElement(String aQualifiedName)
-														throws SAXParseException
 	{
 		// NOP
 	}
 
 	@Override
 	public void handleGoToChildElement(String aQualifiedName)
-																throws SAXParseException
 	{
 		// NOP
 	}
 
 	@Override
-	public void handleStartElement(String aQualifiedName) throws SAXParseException
+	public void handleStartElement(String aQualifiedName)
 	{
 		// NOP
 	}

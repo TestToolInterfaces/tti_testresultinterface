@@ -17,7 +17,7 @@ public class TestCaseResultReader
 	 */
 	public TestCaseResultReader()
 	{
-		Trace.println(Trace.LEVEL.CONSTRUCTOR);
+		Trace.println(Trace.CONSTRUCTOR);
 	}
 
 	/** 
@@ -25,7 +25,7 @@ public class TestCaseResultReader
 	 */
 	public TestCaseResult readTcResultFile( TestCaseResultLink aTestCaseResultLink )
 	{
-		Trace.println(Trace.LEVEL.SUITE, "readTcResultFile( " + aTestCaseResultLink.getId() + " )", true);
+		Trace.println(Trace.SUITE, "readTcResultFile( " + aTestCaseResultLink.getId() + " )", true);
 
 		return readTcResultFile( aTestCaseResultLink.getLink() );
 	}

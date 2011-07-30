@@ -113,7 +113,7 @@ public class XmlWriterUtils
 	
 	public static void copyXsl(File aSourceDir, File aTargetLogDir)
 	{
-	    Trace.println(Trace.LEVEL.UTIL, "copyXsl( " + aTargetLogDir.getName() + " )", true);
+	    Trace.println(Trace.UTIL, "copyXsl( " + aTargetLogDir.getName() + " )", true);
 		if ( aSourceDir == null )
 		{
 			return;
