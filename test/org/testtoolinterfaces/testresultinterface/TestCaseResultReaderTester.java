@@ -11,6 +11,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testsuite.LooseTestInterfaceList;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 
 
 public class TestCaseResultReaderTester extends TestCase
@@ -76,7 +78,8 @@ public class TestCaseResultReaderTester extends TestCase
 												"testXmlFiles");
 
 			File tcResultFile = new File(testXmlFilesDir, aFileName);
-			TestCaseResultReader tcResultReader = new TestCaseResultReader();
+			TestInterfaceList interfaceList = new LooseTestInterfaceList();
+			TestCaseResultReader tcResultReader = new TestCaseResultReader(interfaceList);
 			tcResult = tcResultReader.readTcResultFile( tcResultFile );
 		}
 		catch (URISyntaxException e)

@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
+import org.testtoolinterfaces.testsuite.TestInterface;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.testsuite.TestStepCommand;
 import org.testtoolinterfaces.testsuite.TestStepSimple;
@@ -31,6 +33,7 @@ import org.testtoolinterfaces.utils.XmlHandler;
 public class ActionTypeResultXmlHandler extends XmlHandler
 {
 	public static final String PARAM_SEQUENCE = "sequence";
+	public static final String PARAM_INTERFACE = "interface";
 
 	private static final String COMMAND_ELEMENT = "command";
 	private static final String RESULT_ELEMENT = "result";
@@ -39,15 +42,21 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	private GenericTagAndStringXmlHandler myResultXmlHandler;
 	private LogFileXmlHandler myLogFileXmlHandler;
 
-	private int myCurrentSequence = 0;
+	private TestInterfaceList myInterfaceList;
+
+	private int mySequence = 0;
+	private TestInterface myInterface;
 	private String myCommand = "";
 	private TestResult.VERDICT myResult = TestResult.UNKNOWN;
 	private Hashtable<String, String> myLogFiles = new Hashtable<String, String>();
 
-	public ActionTypeResultXmlHandler( XMLReader anXmlReader, TestStep.StepType aTag )
+	public ActionTypeResultXmlHandler( XMLReader anXmlReader, TestStep.StepType aTag, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, aTag.toString());
 		Trace.println(Trace.CONSTRUCTOR, "ActionTypeResultXmlHandler( anXmlreader, " + aTag + " )", true);
+
+		myInterfaceList = anInterfaceList;
+		myInterface = anInterfaceList.getInterface( "Unknown" );
 
 		myCommandXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMAND_ELEMENT);
 		this.addStartElementHandler(COMMAND_ELEMENT, myCommandXmlHandler);
@@ -72,8 +81,14 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		    {
 		    	if (att.getQName(i).equalsIgnoreCase(PARAM_SEQUENCE))
 		    	{
-		    		myCurrentSequence = Integer.valueOf( att.getValue(i) ).intValue();
-		    		Trace.println( Trace.ALL, "        myCurrentSequence -> " + myCurrentSequence);
+		    		mySequence = Integer.valueOf( att.getValue(i) ).intValue();
+		    		Trace.println( Trace.ALL, "        mySequence -> " + mySequence);
+    	    	}
+		    	else if (att.getQName(i).equalsIgnoreCase(PARAM_INTERFACE))
+		    	{
+		    		String interfaceName = att.getValue(i);
+		    		myInterface = myInterfaceList.getInterface(interfaceName);
+		    		Trace.println( Trace.ALL, "        myInterface -> " + myInterface.getInterfaceName());
     	    	}
 		    }
     	}
@@ -129,10 +144,10 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
 		TestStep.StepType action = TestStep.StepType.valueOf(this.getStartElement());
 		TestStepSimple testStep = new TestStepCommand( action,
-		                                               myCurrentSequence,
+		                                               mySequence,
 		                                               "", // Description
 		                                               myCommand,
-		                                               null, // TestInterface
+		                                               myInterface,
 		                                               new ParameterArrayList() );
 		TestStepResult testStepResult = new TestStepResult( testStep );
 		testStepResult.setResult( myResult );
@@ -151,6 +166,6 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	public void reset()
 	{
 		Trace.println(Trace.SUITE);
-		myCurrentSequence = 0;
+		mySequence = 0;
 	}
 }

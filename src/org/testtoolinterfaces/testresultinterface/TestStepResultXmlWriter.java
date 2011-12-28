@@ -7,10 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.Parameter;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
+import org.testtoolinterfaces.testsuite.ParameterHash;
+import org.testtoolinterfaces.testsuite.ParameterImpl;
+import org.testtoolinterfaces.testsuite.ParameterVariable;
 
 import org.testtoolinterfaces.utils.Trace;
 
@@ -20,6 +24,8 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class TestStepResultXmlWriter
 {
+	TestStepResultXmlWriter mySubTestStepResultXmlWriter;
+
 	/**
 	 * @param aResult
 	 * @param anIndentLevel
@@ -57,6 +63,8 @@ public class TestStepResultXmlWriter
     	String script = aResult.getScript();
     	if ( ! script.isEmpty() ) { aStream.write("      <script>" + script + "</script>\n"); }
 
+    	printSubTestStep( aResult, aStream, aLogDir );
+    	
     	aStream.write("      <result>" + aResult.getResult().toString() + "</result>\n");
 
     	ParameterArrayList parameters = aResult.getParameters();
@@ -64,11 +72,29 @@ public class TestStepResultXmlWriter
     	for(int i=0; i<params.size(); i++)
     	{
     		Parameter param = params.get(i);
-        	aStream.write("      <parameter id='" + param.getName()
-        	              + "' type='" + param.getValueType().getSimpleName()
-        	              + "' sequence='" + param.getIndex()
-        	              + "'>"
-        	              + param.getValue().toString() + "</parameter>\n");
+        	aStream.write("      <parameter id='" + param.getName() + "' " );
+    		if (ParameterImpl.class.isInstance(param))
+    		{
+    			aStream.write( "type='value' sequence='" + param.getIndex() + "'>"
+            	               + ((ParameterImpl) param).getValue().toString() );
+   			
+    		}
+    		else if (ParameterVariable.class.isInstance(param))
+    		{
+            	aStream.write( "type='variable' sequence='" + param.getIndex() + "'>"
+            	               + ((ParameterVariable) param).getVariableName() );
+    		}
+    		else if (ParameterHash.class.isInstance(param))
+    		{
+    			// TODO print the sub-parameters
+            	aStream.write( "type='hash' sequence='" + param.getIndex() + "'>"
+            	               + ((ParameterHash) param).size() + " sub-parameters" );
+    		}
+    		else
+    		{
+            	aStream.write( "type='unknown' sequence='" + param.getIndex() + "'>" );
+    		}
+        	aStream.write("</parameter>\n" );
     	}
 
     	String comment = aResult.getComment();
@@ -76,5 +102,33 @@ public class TestStepResultXmlWriter
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
 		aStream.write("    </" + tag + ">\n");
+	}
+	
+	private void printSubTestStep( TestStepResult aResult,
+	    	                       OutputStreamWriter aStream,
+	    	                       File aLogDir ) throws IOException
+	{
+		Trace.println(Trace.UTIL);
+
+		Hashtable<Integer, TestStepResult> subSteps = aResult.getSubSteps();
+		if ( subSteps.size() > 0 )
+		{
+	    	aStream.write("      <substeps>\n");
+	    	if ( mySubTestStepResultXmlWriter == null )
+	    	{
+	    		mySubTestStepResultXmlWriter = new TestStepResultXmlWriter();
+	    	}
+
+			for (int key = 0; key < subSteps.size(); key++)
+	    	{
+				TestStepResult tsResult = subSteps.get(key);
+				if ( tsResult != null )
+				{
+					mySubTestStepResultXmlWriter.printXml(subSteps.get(key), aStream, aLogDir);
+				}
+	    	}
+			
+	    	aStream.write("      </substeps>\n");
+		}	
 	}
 }

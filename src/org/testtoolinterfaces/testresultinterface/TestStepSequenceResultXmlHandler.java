@@ -3,6 +3,7 @@ package org.testtoolinterfaces.testresultinterface;
 import java.util.ArrayList;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
@@ -17,18 +18,19 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 	private ActionTypeResultXmlHandler myCheckXmlHandler;
 
 	public TestStepSequenceResultXmlHandler(XMLReader anXmlReader,
-											String aTag)
+											String aTag,
+											TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, aTag);
 		Trace.println(Trace.CONSTRUCTOR);
 
     	this.reset();
 
-    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action);
+    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action, anInterfaceList);
 		this.addStartElementHandler(TestStep.StepType.action.toString(), myActionXmlHandler);
 		myActionXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
 
-		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.check);
+		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.check, anInterfaceList);
 		this.addStartElementHandler(TestStep.StepType.check.toString(), myCheckXmlHandler);
 		myCheckXmlHandler.addEndElementHandler(TestStep.StepType.check.toString(), this);
 	}

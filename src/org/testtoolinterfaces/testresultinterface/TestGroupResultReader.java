@@ -7,16 +7,19 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.utils.Trace;
 import org.xml.sax.XMLReader;
 
 public class TestGroupResultReader
 {
+	private TestInterfaceList myInterfaceList;
 	/**
 	 */
-	public TestGroupResultReader()
+	public TestGroupResultReader( TestInterfaceList anInterfaceList )
 	{
 		Trace.println(Trace.CONSTRUCTOR);
+		myInterfaceList = anInterfaceList;
 	}
 
 	/** 
@@ -36,7 +39,7 @@ public class TestGroupResultReader
 			XMLReader xmlReader = saxParser.getXMLReader();
 
 	        // create a handler
-			TestGroupResultXmlHandler handler = new TestGroupResultXmlHandler(xmlReader);
+			TestGroupResultXmlHandler handler = new TestGroupResultXmlHandler(xmlReader, myInterfaceList);
 
 	        // assign the handler to the parser
 	        xmlReader.setContentHandler(handler);

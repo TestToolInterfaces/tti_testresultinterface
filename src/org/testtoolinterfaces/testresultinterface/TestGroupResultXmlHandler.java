@@ -11,6 +11,7 @@ import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.TestGroup;
 import org.testtoolinterfaces.testsuite.TestGroupImpl;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
@@ -92,7 +93,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	 * 
 	 * @throws NullPointerException if aBaseLogDir is null
 	 */
-	public TestGroupResultXmlHandler( XMLReader anXmlReader )
+	public TestGroupResultXmlHandler( XMLReader anXmlReader, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, START_ELEMENT);
 		Trace.println(Trace.CONSTRUCTOR);
@@ -107,7 +108,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 		this.addStartElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
 		myRequirementIdXmlHandler.addEndElementHandler(ELEMENT_REQUIREMENT, this);
 
-		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_PREPARE);
+		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_PREPARE, anInterfaceList);
 		this.addStartElementHandler(ELEMENT_PREPARE, myPrepareResultXmlHandler);
 		myPrepareResultXmlHandler.addEndElementHandler(ELEMENT_PREPARE, this);
 
@@ -119,7 +120,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 		this.addStartElementHandler(TestGroupResultLinkXmlHandler.ELEMENT_START, myTestGroupResulLinkXmlHandler);
 		myTestGroupResulLinkXmlHandler.addEndElementHandler(TestGroupResultLinkXmlHandler.ELEMENT_START, this);
 
-		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_RESTORE);
+		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_RESTORE, anInterfaceList);
 		this.addStartElementHandler(ELEMENT_RESTORE, myRestoreResultXmlHandler);
 		myRestoreResultXmlHandler.addEndElementHandler(ELEMENT_RESTORE, this);
 

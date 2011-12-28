@@ -9,6 +9,7 @@ import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.TestCase;
 import org.testtoolinterfaces.testsuite.TestCaseImpl;
+import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -22,12 +23,14 @@ import org.testtoolinterfaces.utils.XmlHandler;
  * @author Arjan Kranenburg 
  * 
  * <testcase id=... sequence=...>
+ *  <description>...</description>
+ *  <requirement>...</requirement>
  *  <prepare>
  *   ...
  *  </prepare>
- *  <execution>
+ *  <execute>
  *   ...
- *  </execution>
+ *  </execute>
  *  <restore>
  *   ...
  *  </restore>
@@ -81,7 +84,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	 * 
 	 * @throws NullPointerException if aBaseLogDir is null
 	 */
-	public TestCaseResultXmlHandler( XMLReader anXmlReader )
+	public TestCaseResultXmlHandler( XMLReader anXmlReader, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, START_ELEMENT);
 		Trace.println(Trace.CONSTRUCTOR);
@@ -96,15 +99,21 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		this.addStartElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
 		myRequirementIdXmlHandler.addEndElementHandler(ELEMENT_REQUIREMENT, this);
 
-		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, PREPARE_ELEMENT);
+		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
+		                                                                  PREPARE_ELEMENT,
+		                                                                  anInterfaceList );
 		this.addStartElementHandler(PREPARE_ELEMENT, myPrepareResultXmlHandler);
 		myPrepareResultXmlHandler.addEndElementHandler(PREPARE_ELEMENT, this);
 
-		myExecutionResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, EXECUTE_ELEMENT);
+		myExecutionResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
+		                                                                    EXECUTE_ELEMENT,
+		                                                                    anInterfaceList );
 		this.addStartElementHandler(EXECUTE_ELEMENT, myExecutionResultXmlHandler);
 		myExecutionResultXmlHandler.addEndElementHandler(EXECUTE_ELEMENT, this);
 
-		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, RESTORE_ELEMENT);
+		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
+		                                                                  RESTORE_ELEMENT,
+		                                                                  anInterfaceList );
 		this.addStartElementHandler(RESTORE_ELEMENT, myRestoreResultXmlHandler);
 		myRestoreResultXmlHandler.addEndElementHandler(RESTORE_ELEMENT, this);
 
