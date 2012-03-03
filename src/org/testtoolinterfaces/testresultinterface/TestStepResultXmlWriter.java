@@ -47,8 +47,7 @@ public class TestStepResultXmlWriter
 	                      File aLogDir) throws IOException
 	{
 		Trace.println(Trace.UTIL);
-		String tag = aResult.getType().toString();
-		aStream.write("    <" + tag);
+		aStream.write("    <teststep" );
 		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
 		aStream.write(">\n");
 
@@ -101,7 +100,7 @@ public class TestStepResultXmlWriter
     	if ( ! comment.isEmpty() ) { aStream.write("      <comment>" + comment + "</comment>\n"); }
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
-		aStream.write("    </" + tag + ">\n");
+		aStream.write("    </teststep>\n");
 	}
 	
 	private void printSubTestStep( TestStepResult aResult,

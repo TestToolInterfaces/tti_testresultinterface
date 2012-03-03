@@ -10,7 +10,6 @@ import org.testtoolinterfaces.testsuite.TestInterface;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.testsuite.TestStepCommand;
-import org.testtoolinterfaces.testsuite.TestStepSimple;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
@@ -50,26 +49,23 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	private TestResult.VERDICT myResult = TestResult.UNKNOWN;
 	private Hashtable<String, String> myLogFiles = new Hashtable<String, String>();
 
-	public ActionTypeResultXmlHandler( XMLReader anXmlReader, TestStep.StepType aTag, TestInterfaceList anInterfaceList )
+	public ActionTypeResultXmlHandler( XMLReader anXmlReader, String aTag, TestInterfaceList anInterfaceList )
 	{
-		super(anXmlReader, aTag.toString());
+		super(anXmlReader, aTag);
 		Trace.println(Trace.CONSTRUCTOR, "ActionTypeResultXmlHandler( anXmlreader, " + aTag + " )", true);
 
 		myInterfaceList = anInterfaceList;
 		myInterface = anInterfaceList.getInterface( "Unknown" );
 
 		myCommandXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMAND_ELEMENT);
-		this.addStartElementHandler(COMMAND_ELEMENT, myCommandXmlHandler);
-		myCommandXmlHandler.addEndElementHandler(COMMAND_ELEMENT, this);
+		this.addElementHandler(COMMAND_ELEMENT, myCommandXmlHandler);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
-		this.addStartElementHandler(RESULT_ELEMENT, myResultXmlHandler);
-		myResultXmlHandler.addEndElementHandler(RESULT_ELEMENT, this);
+		this.addElementHandler(RESULT_ELEMENT, myResultXmlHandler);
 
 		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
-		this.addStartElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
-		myLogFileXmlHandler.addEndElementHandler(LogFileXmlHandler.START_ELEMENT, this);
-	}
+		this.addElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+}
 
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
@@ -142,9 +138,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 
-		TestStep.StepType action = TestStep.StepType.valueOf(this.getStartElement());
-		TestStepSimple testStep = new TestStepCommand( action,
-		                                               mySequence,
+		TestStep testStep = new TestStepCommand(       mySequence,
 		                                               "", // Description
 		                                               myCommand,
 		                                               myInterface,

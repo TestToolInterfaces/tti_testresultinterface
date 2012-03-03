@@ -49,24 +49,19 @@ public class SummaryResultXmlHandler extends XmlHandler
 		reset();
 
 		myTotalXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_TOTAL);
-		this.addStartElementHandler(ELEMENT_TOTAL, myTotalXmlHandler);
-		myTotalXmlHandler.addEndElementHandler(ELEMENT_TOTAL, this);
+		this.addElementHandler(ELEMENT_TOTAL, myTotalXmlHandler);
 
 		myPassedXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_PASSED);
-		this.addStartElementHandler(ELEMENT_PASSED, myPassedXmlHandler);
-		myPassedXmlHandler.addEndElementHandler(ELEMENT_PASSED, this);
+		this.addElementHandler(ELEMENT_PASSED, myPassedXmlHandler);
 
 		myFailedXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_FAILED);
-		this.addStartElementHandler(ELEMENT_FAILED, myFailedXmlHandler);
-		myFailedXmlHandler.addEndElementHandler(ELEMENT_FAILED, this);
+		this.addElementHandler(ELEMENT_FAILED, myFailedXmlHandler);
 
 		myUnknownXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_UNKNOWN);
-		this.addStartElementHandler(ELEMENT_UNKNOWN, myUnknownXmlHandler);
-		myUnknownXmlHandler.addEndElementHandler(ELEMENT_UNKNOWN, this);
+		this.addElementHandler(ELEMENT_UNKNOWN, myUnknownXmlHandler);
 
 		myErrorXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_ERROR);
-		this.addStartElementHandler(ELEMENT_ERROR, myErrorXmlHandler);
-		myErrorXmlHandler.addEndElementHandler(ELEMENT_ERROR, this);
+		this.addElementHandler(ELEMENT_ERROR, myErrorXmlHandler);
 	}
 
 	@Override
@@ -74,7 +69,13 @@ public class SummaryResultXmlHandler extends XmlHandler
 	                                          XmlHandler aChildXmlHandler)
 	{
 		Trace.println(Trace.SUITE);
-		int value = Integer.valueOf( aChildXmlHandler.getValue() ).intValue();
+		if ( ! aChildXmlHandler.getClass().equals(GenericTagAndStringXmlHandler.class) )
+		{
+			throw new Error( "ChildXmlHandler (" + aChildXmlHandler.getClass().toString() + ") must be of type GenericTagAndStringXmlHandler" );
+		}
+		GenericTagAndStringXmlHandler childXmlHandler = (GenericTagAndStringXmlHandler) aChildXmlHandler;
+
+		int value = Integer.valueOf( childXmlHandler.getValue() ).intValue();
 		aChildXmlHandler.reset();
 
 		if ( value < 0 )

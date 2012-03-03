@@ -3,8 +3,8 @@ package org.testtoolinterfaces.testresultinterface;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
+import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
-import org.testtoolinterfaces.utils.XmlHandler;
 
 /**
  * @author Arjan Kranenburg 
@@ -12,7 +12,7 @@ import org.testtoolinterfaces.utils.XmlHandler;
  * <logfile type="...">...</logfile>
  * 
  */
-public class LogFileXmlHandler extends XmlHandler
+public class LogFileXmlHandler extends GenericTagAndStringXmlHandler
 {
 	public static final String START_ELEMENT = "logfile";
 	public static final String PARAM_TYPE = "type";
@@ -41,37 +41,6 @@ public class LogFileXmlHandler extends XmlHandler
 		    }
     	}
     }
-
-	@Override
-	public void handleStartElement(String aQualifiedName)
-	{
-    	//nop
-	}
-
-	@Override
-	public void handleCharacters(String aValue)
-	{
-		Trace.println(Trace.SUITE, "handleCharacters( " + aValue.trim() + " )", true);
-		this.appendValue(aValue.trim());
-	}
-
-	@Override
-	public void handleEndElement(String aQualifiedName)
-	{
-    	//nop
-	}
-	
-	@Override
-	public void handleGoToChildElement(String aQualifiedName)
-	{
-		// nop
-	}
-
-	@Override
-	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
-	{
-		// nop
-	}
 
 	public String getType()
 	{

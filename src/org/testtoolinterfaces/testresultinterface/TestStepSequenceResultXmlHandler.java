@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
@@ -26,13 +25,13 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 
     	this.reset();
 
-    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.action, anInterfaceList);
-		this.addStartElementHandler(TestStep.StepType.action.toString(), myActionXmlHandler);
-		myActionXmlHandler.addEndElementHandler(TestStep.StepType.action.toString(), this);
+    	//TODO Suspicious: replaced TestStep.StepType.action with "action"
+    	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "action", anInterfaceList);
+		this.addElementHandler("action", myActionXmlHandler);
 
-		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, TestStep.StepType.check, anInterfaceList);
-		this.addStartElementHandler(TestStep.StepType.check.toString(), myCheckXmlHandler);
-		myCheckXmlHandler.addEndElementHandler(TestStep.StepType.check.toString(), this);
+    	//TODO Suspicious: replaced TestStep.StepType.check with "check"
+		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "check", anInterfaceList);
+		this.addElementHandler("check", myCheckXmlHandler);
 	}
 
 	@Override
@@ -58,12 +57,14 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 												XmlHandler aChildXmlHandler)
 	{
 		Trace.println(Trace.SUITE);
-    	if (aQualifiedName.equalsIgnoreCase(TestStep.StepType.action.toString()))
+    	//TODO Suspicious: replaced TestStep.StepType.action with "action"
+    	if (aQualifiedName.equalsIgnoreCase("action"))
     	{
     		mySteps.add(myActionXmlHandler.getActionStep());
     		myActionXmlHandler.reset();
     	}
-    	if (aQualifiedName.equalsIgnoreCase(TestStep.StepType.check.toString()))
+    	//TODO Suspicious: replaced TestStep.StepType.check with "check"
+    	if (aQualifiedName.equalsIgnoreCase("check"))
     	{
     		mySteps.add(myCheckXmlHandler.getActionStep());
     		myCheckXmlHandler.reset();

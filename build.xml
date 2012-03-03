@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
  
 <project name="TestResultInterface" default="CreateJarFile">
-	<property name="version.num" value="0.2.1"/>
+	<property name="version.num" value="0.3.0"/>
     <buildnumber file="build.num"/>
 	<target name="CreateJarFile">
 
@@ -20,7 +20,7 @@
 		        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
 		        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
 		        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />
-		        <attribute name="Specification-Version" value="0.2" />
+		        <attribute name="Specification-Version" value="0.3" />
 		        <attribute name="Specification-Vendor" value="TestToolInterfaces.org" />
 		    </manifest>
 		</jar>
@@ -43,7 +43,7 @@
 		        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
 		        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
 		        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />
-		        <attribute name="Specification-Version" value="0.2" />
+		        <attribute name="Specification-Version" value="0.3" />
 		        <attribute name="Specification-Vendor" value="TestToolInterfaces.org" />
 		    </manifest>
 		</jar>

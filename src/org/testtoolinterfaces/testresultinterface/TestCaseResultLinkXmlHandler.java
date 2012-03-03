@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestResult.VERDICT;
 import org.testtoolinterfaces.testsuite.TestCaseLink;
+import org.testtoolinterfaces.testsuite.TestLinkImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
@@ -54,12 +55,10 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		reset();
 
 		myTestCaseLinkXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_LINK);
-		this.addStartElementHandler(ELEMENT_LINK, myTestCaseLinkXmlHandler);
-		myTestCaseLinkXmlHandler.addEndElementHandler(ELEMENT_LINK, this);
+		this.addElementHandler(ELEMENT_LINK, myTestCaseLinkXmlHandler);
 
 		myVerdictXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_VERDICT);
-		this.addStartElementHandler(ELEMENT_VERDICT, myVerdictXmlHandler);
-		myVerdictXmlHandler.addEndElementHandler(ELEMENT_VERDICT, this);
+		this.addElementHandler(ELEMENT_VERDICT, myVerdictXmlHandler);
 	}
 
 	@Override
@@ -110,7 +109,11 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 	public TestCaseResultLink getTestCaseResultLink()
 	{
 		Trace.println(Trace.SUITE);
-		TestCaseLink tcLink = new TestCaseLink( myTestCaseId, myType, mySequence, new File("unknown"), new Hashtable<String, String>() );
+		TestCaseLink tcLink = new TestCaseLink( myTestCaseId,
+		                                        mySequence,
+		                                        new TestLinkImpl("unknown", myType),
+		                                        new Hashtable<String, String>(),
+		                                        new Hashtable<String, String>() );
 		TestCaseResultLink tcResultLink = new TestCaseResultLink(tcLink, myResult, myTcLink);
 		return tcResultLink;
 	}

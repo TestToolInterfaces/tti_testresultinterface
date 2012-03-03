@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
 import org.testtoolinterfaces.testsuite.TestGroupLink;
+import org.testtoolinterfaces.testsuite.TestLinkImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
@@ -53,12 +54,10 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		reset();
 
 		myTestGroupLinkXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_LINK);
-		this.addStartElementHandler(ELEMENT_LINK, myTestGroupLinkXmlHandler);
-		myTestGroupLinkXmlHandler.addEndElementHandler(ELEMENT_LINK, this);
+		this.addElementHandler(ELEMENT_LINK, myTestGroupLinkXmlHandler);
 
 		mySummaryXmlHandler = new SummaryResultXmlHandler(anXmlReader);
-		this.addStartElementHandler(SummaryResultXmlHandler.ELEMENT_START, mySummaryXmlHandler);
-		mySummaryXmlHandler.addEndElementHandler(SummaryResultXmlHandler.ELEMENT_START, this);
+		this.addElementHandler(SummaryResultXmlHandler.ELEMENT_START, mySummaryXmlHandler);
 	}
 
 	@Override
@@ -109,7 +108,11 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	public TestGroupResultLink getTestGroupResultLink()
 	{
 		Trace.println(Trace.SUITE);
-		TestGroupLink tgLink = new TestGroupLink( myTestGroupId, myType, mySequence, new File("unknown"), new Hashtable<String, String>() );
+		TestGroupLink tgLink = new TestGroupLink( myTestGroupId,
+		                                          mySequence,
+		                                          new TestLinkImpl("unknown", myType),
+		                                          new Hashtable<String, String>(),
+		                                          new Hashtable<String, String>() );
 		TestGroupResultLink tgResultLink = new TestGroupResultLink(tgLink, myResult, myTgResultLink);
 		return tgResultLink;
 	}

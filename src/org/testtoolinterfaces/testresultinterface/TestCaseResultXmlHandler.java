@@ -92,42 +92,34 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		this.reset();
 
 		myDescriptionXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, DESCRIPTION_ELEMENT);
-		this.addStartElementHandler(DESCRIPTION_ELEMENT, myDescriptionXmlHandler);
-		myDescriptionXmlHandler.addEndElementHandler(DESCRIPTION_ELEMENT, this);
+		this.addElementHandler(DESCRIPTION_ELEMENT, myDescriptionXmlHandler);
 
      	myRequirementIdXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_REQUIREMENT);
-		this.addStartElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
-		myRequirementIdXmlHandler.addEndElementHandler(ELEMENT_REQUIREMENT, this);
+		this.addElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
 
 		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                  PREPARE_ELEMENT,
 		                                                                  anInterfaceList );
-		this.addStartElementHandler(PREPARE_ELEMENT, myPrepareResultXmlHandler);
-		myPrepareResultXmlHandler.addEndElementHandler(PREPARE_ELEMENT, this);
+		this.addElementHandler(PREPARE_ELEMENT, myPrepareResultXmlHandler);
 
 		myExecutionResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                    EXECUTE_ELEMENT,
 		                                                                    anInterfaceList );
-		this.addStartElementHandler(EXECUTE_ELEMENT, myExecutionResultXmlHandler);
-		myExecutionResultXmlHandler.addEndElementHandler(EXECUTE_ELEMENT, this);
+		this.addElementHandler(EXECUTE_ELEMENT, myExecutionResultXmlHandler);
 
 		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                  RESTORE_ELEMENT,
 		                                                                  anInterfaceList );
-		this.addStartElementHandler(RESTORE_ELEMENT, myRestoreResultXmlHandler);
-		myRestoreResultXmlHandler.addEndElementHandler(RESTORE_ELEMENT, this);
+		this.addElementHandler(RESTORE_ELEMENT, myRestoreResultXmlHandler);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
-		this.addStartElementHandler(RESULT_ELEMENT, myResultXmlHandler);
-		myResultXmlHandler.addEndElementHandler(RESULT_ELEMENT, this);
+		this.addElementHandler(RESULT_ELEMENT, myResultXmlHandler);
 
 		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
-		this.addStartElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
-		myLogFileXmlHandler.addEndElementHandler(LogFileXmlHandler.START_ELEMENT, this);
+		this.addElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
 
 		myCommentXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMENT_ELEMENT);
-		this.addStartElementHandler(COMMENT_ELEMENT, myCommentXmlHandler);
-		myCommentXmlHandler.addEndElementHandler(COMMENT_ELEMENT, this);
+		this.addElementHandler(COMMENT_ELEMENT, myCommentXmlHandler);
 	}
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
@@ -165,12 +157,13 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		}
 
 		TestCase testCase = new TestCaseImpl( myTestCaseId,
-	                                          new Hashtable<String, String>(),
 	                                          myDescription,
+	                                          0,
 	                                          myRequirements,
        										  null,
        										  null,
        										  null,
+	                                          new Hashtable<String, String>(),
        										  new Hashtable<String, String>() ); // testSteps are null, but added below
 
 //		String aTestCaseId,
