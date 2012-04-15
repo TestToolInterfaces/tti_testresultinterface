@@ -4,6 +4,7 @@
 package org.testtoolinterfaces.testsuite;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * @author Arjan Kranenburg
@@ -56,5 +57,12 @@ public class LooseTestInterfaceList implements TestInterfaceList
 		}
 
 		return testInterface;
+	}
+
+	@Override
+	public Iterator<TestInterface> iterator()
+	{
+		// TODO not sure if this is sufficient. The local myList is not included
+		return myTestInterfaces.iterator();
 	}
 }
