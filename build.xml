@@ -1,51 +1,108 @@
 <?xml version="1.0"?>
  
-<project name="TestResultInterface" default="CreateJarFile">
-	<property name="version.num" value="0.3.0"/>
-    <buildnumber file="build.num"/>
-	<target name="CreateJarFile">
+<project name="testtoolinterfaces-result-interface" basedir="." default="all">
+	<property name="src.dir"       value="src"/>
+    <property name="build.dir"     value="build"/>
+    <property name="classes.dir"   value="bin"/>
+    <property name="jar.dir"       value="${build.dir}/jar"/>
 
-		<delete file="../TestResultInterface.jar"/>
-<!--		<property name="version.num" value="0.2.1"/>
-	    <buildnumber file="build.num"/> -->
-		<jar destfile="../TestResultInterface.jar" duplicate="preserve" index="true">
-			<zipfileset dir="bin" prefix="" />
-			<zipfileset dir="src" prefix="" />
-			<zipfileset src="lib/TestResult.jar" />
+	<property name="version.num"   value="0.3.0"/>
+	<property name="manifest.file" value="${build.dir}/MANIFEST.MF"/>
+	<property name="printer.manifest.file" value="${build.dir}/PRINTER-MANIFEST.MF"/>
+	<property name="build.compiler.warnings" value="true"/>
 
-			<manifest>
-		        <attribute name="Created-By" value="TestToolInterfaces.org"/>
-		        <attribute name="Built-By" value="${user.name}"/>
+	<path id="project.class.path">
+		<pathelement location="lib/testtoolinterfaces-utils-0.1.2.jar"/>
+		<pathelement location="lib/testtoolinterfaces-suite-0.3.0.jar"/>
+		<pathelement location="lib/testtoolinterfaces-result-0.3.0.jar"/>
+        <pathelement path="${java.class.path}/"/>
+	</path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${classes.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" compiler="javac1.5">
+        	<classpath refid="project.class.path"/>
+        </javac>
+	    <buildnumber file="build.num"/>
+    </target>
+
+    <target name="manifest">
+        <mkdir dir="${build.dir}"/>
+		<manifest file="${manifest.file}">
+	        <attribute name="Created-By" value="TestToolInterfaces.org"/>
+	        <attribute name="Built-By" value="${user.name}"/>
 		        <attribute name="Implementation-Title" value="Test Tool Interfaces - Test Result Interface" />
 		        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
 		        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
 		        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />
 		        <attribute name="Specification-Version" value="0.3" />
 		        <attribute name="Specification-Vendor" value="TestToolInterfaces.org" />
-		    </manifest>
-		</jar>
-	</target>
+	    </manifest>
+    </target>
 
-	<target name="CreateExecutableJarFile">
-		<delete file="../TCResultPrinter.jar"/>
-		<jar destfile="../TCResultPrinter.jar" duplicate="preserve" index="true">
-			<fileset dir="src" />
-			<fileset dir="bin" />
+    <target name="testcaseresult-printer-manifest">
+        <mkdir dir="${build.dir}"/>
+		<manifest file="${printer.manifest.file}">
+			<attribute name="Main-Class" value="org.testtoolinterfaces.testresultinterface.TCResultPrinter" />
+	        <attribute name="Created-By" value="TestToolInterfaces.org"/>
+	        <attribute name="Built-By" value="${user.name}"/>
+	        <attribute name="Class-Path" value="testtoolinterfaces-utils-0.1.2.jar
+	        									testtoolinterfaces-suite-0.3.0.jar
+	        									testtoolinterfaces-result-0.3.0.jar "/>
+	        <attribute name="Implementation-Title" value="Test Tool Interfaces - Test Result Interface" />
+	        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
+	        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
+	        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />
+	        <attribute name="Specification-Version" value="0.3" />
+	        <attribute name="Specification-Vendor" value="TestToolInterfaces.org" />
+	    </manifest>
+    </target>
+
+   <target name="package-jar">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}-${version.num}.jar"
+        	 basedir="${classes.dir}"
+        	 manifest="${manifest.file}">
 			<fileset dir=".">
 			    <include name="License_lgpl-3.0.txt"/>
 			</fileset>
-			<zipfileset src="lib/TestResult.jar" />
-			<manifest>
-				<attribute name="Main-Class" value="org.testtoolinterfaces.testresultinterface.TCResultPrinter" />
-		        <attribute name="Created-By" value="TestToolInterfaces.org"/>
-		        <attribute name="Built-By" value="${user.name}"/>
-		        <attribute name="Implementation-Title" value="Test Tool Interfaces - Test Case Result Printer" />
-		        <attribute name="Implementation-Version" value="${version.num}.${build.number}"/> 
-		        <attribute name="Implementation-Vendor" value="Open Source - Arjan Kranenburg" />
-		        <attribute name="Specification-Title" value="Test Tool Interfaces - Result Interface" />
-		        <attribute name="Specification-Version" value="0.3" />
-		        <attribute name="Specification-Vendor" value="TestToolInterfaces.org" />
-		    </manifest>
-		</jar>
-	</target>
+        </jar>
+    </target>
+
+    <target name="package-jar-src">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}-${version.num}-src.jar"
+        	 basedir="${classes.dir}"
+        	 manifest="${manifest.file}">
+			<zipfileset dir="src" prefix="" />
+			<fileset dir=".">
+			    <include name="License_lgpl-3.0.txt"/>
+			</fileset>
+        </jar>
+    </target>
+
+    <target name="testcaseresult-printer-jar">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/testcaseresult-printer-${version.num}.jar"
+        	 basedir="${classes.dir}"
+        	 manifest="${printer.manifest.file}">
+			<fileset dir=".">
+			    <include name="License_lgpl-3.0.txt"/>
+			</fileset>
+        </jar>
+    </target>
+
+	<target name="jar" depends="compile,manifest,package-jar"/>
+
+	<target name="jar-src" depends="compile,manifest,package-jar-src"/>
+
+	<target name="printer" depends="compile,testcaseresult-printer-manifest,testcaseresult-printer-jar"/>
+
+	<target name="all" depends="clean,compile,manifest,testcaseresult-printer-manifest,package-jar,package-jar-src,testcaseresult-printer-jar"/>
+
 </project>
