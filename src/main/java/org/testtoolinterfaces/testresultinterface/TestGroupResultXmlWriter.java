@@ -64,7 +64,6 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		aTestGroupResult.register(this);
 	}
 
-	@Override
 	public void notify( TestGroupResult aTestGroupResult )
 	{
 	    Trace.println(Trace.UTIL, "notify( " + aTestGroupResult.getId() + " )", true);

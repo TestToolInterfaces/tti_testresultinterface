@@ -39,7 +39,6 @@ public class UndefinedTestInterface implements TestInterface
 	 * @param aValue
 	 */
 	@Deprecated
-	@Override
 	public ParameterImpl createParameter(String aName, String aType, String aValue)
 					 throws TestSuiteException
 	{
@@ -51,7 +50,6 @@ public class UndefinedTestInterface implements TestInterface
 	 * Will return an ampty list
 	 */
 	@Deprecated
-	@Override
 	public ArrayList<String> getCommands()
 	{
 		return new ArrayList<String>();
@@ -60,7 +58,6 @@ public class UndefinedTestInterface implements TestInterface
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testsuite.TestInterface#getInterfaceName()
 	 */
-	@Override
 	public String getInterfaceName()
 	{
 		return myName;
@@ -70,7 +67,6 @@ public class UndefinedTestInterface implements TestInterface
 	 * Will always return false
 	 */
 	@Deprecated
-	@Override
 	public boolean hasCommand(String aCommand)
 	{
 		return false;

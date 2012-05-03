@@ -1,8 +1,6 @@
 package org.testtoolinterfaces.testresultinterface;
 
-
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.Hashtable;
 
 import junit.framework.Assert;
@@ -13,7 +11,6 @@ import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.LooseTestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-
 
 public class TestCaseResultReaderTester extends TestCase
 {
@@ -64,28 +61,15 @@ public class TestCaseResultReaderTester extends TestCase
 
 	private TestCaseResult parseFile( String aFileName )
 	{
-		TestCaseResult tcResult = null;
-		try
-		{
-			File jarFile = new File(  this.getClass().getProtectionDomain()
-			   						.getCodeSource()
-			   						.getLocation()
-			   						.toURI() );
-			File testXmlFilesDir = new File ( jarFile.getParent(),  "test" + File.separator + 
-												"org" + File.separator +
-												"testtoolinterfaces" + File.separator +
-												"testresultinterface" + File.separator +
-												"testXmlFiles");
+		File testXmlFilesDir = new File ( "src" + File.separator +
+                "test" + File.separator +
+                "resources" + File.separator +
+                "testXmlFiles" );
 
-			File tcResultFile = new File(testXmlFilesDir, aFileName);
-			TestInterfaceList interfaceList = new LooseTestInterfaceList();
-			TestCaseResultReader tcResultReader = new TestCaseResultReader(interfaceList);
-			tcResult = tcResultReader.readTcResultFile( tcResultFile );
-		}
-		catch (URISyntaxException e)
-		{
-			e.printStackTrace();
-		}
+		File tcResultFile = new File(testXmlFilesDir, aFileName);
+		TestInterfaceList interfaceList = new LooseTestInterfaceList();
+		TestCaseResultReader tcResultReader = new TestCaseResultReader(interfaceList);
+		TestCaseResult tcResult = tcResultReader.readTcResultFile( tcResultFile );
 		
 		return tcResult;
 	}

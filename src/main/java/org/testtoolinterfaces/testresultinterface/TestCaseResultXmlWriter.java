@@ -67,7 +67,6 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 		aTestCaseResult.register(this);
 	}
 
-	@Override
 	public void notify( TestCaseResult aTestCaseResult )
 	{
 	    Trace.println( Trace.UTIL,

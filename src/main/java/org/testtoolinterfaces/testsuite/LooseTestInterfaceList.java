@@ -37,7 +37,6 @@ public class LooseTestInterfaceList implements TestInterfaceList
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testsuite.TestInterfaceList#getInterface(java.lang.String)
 	 */
-	@Override
 	public TestInterface getInterface(String anInterfaceName)
 	{
 		TestInterface testInterface = null;
@@ -59,7 +58,6 @@ public class LooseTestInterfaceList implements TestInterfaceList
 		return testInterface;
 	}
 
-	@Override
 	public Iterator<TestInterface> iterator()
 	{
 		// TODO not sure if this is sufficient. The local myList is not included
