@@ -6,3 +6,4 @@
 bin
 /build
 /target
+/pom.xml.asc
