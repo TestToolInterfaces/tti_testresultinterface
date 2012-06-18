@@ -54,7 +54,7 @@ public class XmlWriterUtils
 		    {
 		    	String key = keys.nextElement();
 		    	String logFile = (new File(aLogs.get(key))).getCanonicalPath();
-		    	logFile = makeFileRelative(logFile, aBaseLogDir);
+		    	logFile = makeFileRelative(logFile, new File(aBaseLogDir).getCanonicalPath());
 		    	aStream.write(anIndent + "  <logfile");
 		    	aStream.write(" type='" + key + "'");
 		    	aStream.write(">" + logFile);
