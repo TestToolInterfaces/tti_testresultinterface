@@ -83,4 +83,8 @@ public class UndefinedTestInterface implements TestInterface
 		return true;
 	}
 
+	public void destroy() {
+		// nop
+	}
+
 }
