@@ -61,6 +61,7 @@ public class TestStepResultXmlWriter
 
     	String script = aResult.getScript();
     	if ( ! script.isEmpty() ) { aStream.write("      <script>" + script + "</script>\n"); }
+    	aStream.write("      <displayName>" + aResult.getDisplayName() + "</displayName>\n");
 
     	printSubTestStep( aResult, aStream, aLogDir );
     	
