@@ -27,11 +27,11 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 
     	//TODO Suspicious: replaced TestStep.StepType.action with "action"
     	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "action", anInterfaceList);
-		this.addElementHandler("action", myActionXmlHandler);
+		this.addElementHandler(myActionXmlHandler);
 
     	//TODO Suspicious: replaced TestStep.StepType.check with "check"
 		myCheckXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "check", anInterfaceList);
-		this.addElementHandler("check", myCheckXmlHandler);
+		this.addElementHandler(myCheckXmlHandler);
 	}
 
 	@Override
