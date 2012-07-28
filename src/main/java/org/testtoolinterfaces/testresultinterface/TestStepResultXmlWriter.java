@@ -23,16 +23,34 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class TestStepResultXmlWriter
 {
-	TestStepResultXmlWriter mySubTestStepResultXmlWriter;
+//	private String myIndent;
+	private int myIndentLevel = 0;
+	private TestStepResultXmlWriter mySubTestStepResultXmlWriter;
 
 	/**
-	 * @param aResult
-	 * @param anIndentLevel
+	 * 
 	 */
 	public TestStepResultXmlWriter()
 	{
-		Trace.println(Trace.CONSTRUCTOR);
+		this( 4 );
+	}
 
+//	/**
+//	 * @param anIndent
+//	 */
+//	public TestStepResultXmlWriter( String anIndent )
+//	{
+//		Trace.println(Trace.CONSTRUCTOR);
+//		myIndent = anIndent;
+//	}
+
+	/**
+	 * @param anIndent
+	 */
+	public TestStepResultXmlWriter( int anIndentLevel )
+	{
+		Trace.println(Trace.CONSTRUCTOR);
+		myIndentLevel = anIndentLevel;
 	}
 
 	/**
@@ -46,32 +64,33 @@ public class TestStepResultXmlWriter
 	                      File aLogDir) throws IOException
 	{
 		Trace.println(Trace.UTIL);
-		aStream.write("    <teststep" );
+		String indent = repeat( ' ', myIndentLevel );
+		aStream.write( indent + "<teststep" );
 		aStream.write(" sequence='" + aResult.getSequenceNr() + "'");
 		aStream.write(">\n");
 
 		String description = aResult.getDescription();
-    	aStream.write("      <description>");
+    	aStream.write( indent + "  <description>");
     	aStream.write(description);
     	aStream.write("</description>\n");
 	    
     	String command = aResult.getCommand();
-    	if ( ! command.isEmpty() ) { aStream.write("      <command>" + command + "</command>\n"); }
+    	if ( ! command.isEmpty() ) { aStream.write( indent + "  <command>" + command + "</command>\n"); }
 
     	String script = aResult.getScript();
-    	if ( ! script.isEmpty() ) { aStream.write("      <script>" + script + "</script>\n"); }
-    	aStream.write("      <displayName>" + aResult.getDisplayName() + "</displayName>\n");
+    	if ( ! script.isEmpty() ) { aStream.write( indent + "  <script>" + script + "</script>\n"); }
+    	aStream.write( indent + "  <displayName>" + aResult.getDisplayName() + "</displayName>\n");
 
     	printSubTestStep( aResult, aStream, aLogDir );
     	
-    	aStream.write("      <result>" + aResult.getResult().toString() + "</result>\n");
+    	aStream.write( indent + "  <result>" + aResult.getResult().toString() + "</result>\n");
 
     	ParameterArrayList parameters = aResult.getParameters();
     	ArrayList<Parameter> params = parameters.sort();
     	for(int i=0; i<params.size(); i++)
     	{
     		Parameter param = params.get(i);
-        	aStream.write("      <parameter id='" + param.getName() + "' " );
+        	aStream.write( indent + "  <parameter id='" + param.getName() + "' " );
     		if (ParameterImpl.class.isInstance(param))
     		{
     			aStream.write( "type='value' sequence='" + param.getIndex() + "'>"
@@ -97,10 +116,10 @@ public class TestStepResultXmlWriter
     	}
 
     	String comment = aResult.getComment();
-    	if ( ! comment.isEmpty() ) { aStream.write("      <comment>" + comment + "</comment>\n"); }
+    	if ( ! comment.isEmpty() ) { aStream.write( indent + "  <comment>" + comment + "</comment>\n"); }
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
-		aStream.write("    </teststep>\n");
+		aStream.write( indent + "</teststep>\n");
 	}
 	
 	private void printSubTestStep( TestStepResult aResult,
@@ -112,10 +131,11 @@ public class TestStepResultXmlWriter
 		ArrayList<TestStepResult> subStepResults = aResult.getSubSteps();
 		if ( subStepResults.size() > 0 )
 		{
-	    	aStream.write("      <substeps>\n");
+			String indent = repeat( ' ', myIndentLevel + 2 );
+	    	aStream.write( indent + "<substeps>\n");
 	    	if ( mySubTestStepResultXmlWriter == null )
 	    	{
-	    		mySubTestStepResultXmlWriter = new TestStepResultXmlWriter();
+	    		mySubTestStepResultXmlWriter = new TestStepResultXmlWriter( myIndentLevel + 2 );
 	    	}
 
 	    	Iterator<TestStepResult> subStepResultsItr = subStepResults.iterator();
@@ -125,7 +145,17 @@ public class TestStepResultXmlWriter
 				mySubTestStepResultXmlWriter.printXml(tsResult, aStream, aLogDir);
 	    	}
 			
-	    	aStream.write("      </substeps>\n");
+	    	aStream.write( indent + "</substeps>\n");
 		}	
+	}
+
+	private static String repeat(char c,int i)
+	{
+		String str = "";
+		for(int j = 0; j < i; j++)
+		{
+			str = str+c;
+		}
+		return str;
 	}
 }
