@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.Parameter;
@@ -15,7 +15,6 @@ import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.ParameterHash;
 import org.testtoolinterfaces.testsuite.ParameterImpl;
 import org.testtoolinterfaces.testsuite.ParameterVariable;
-
 import org.testtoolinterfaces.utils.Trace;
 
 /**
@@ -110,8 +109,8 @@ public class TestStepResultXmlWriter
 	{
 		Trace.println(Trace.UTIL);
 
-		Hashtable<Integer, TestStepResult> subSteps = aResult.getSubSteps();
-		if ( subSteps.size() > 0 )
+		ArrayList<TestStepResult> subStepResults = aResult.getSubSteps();
+		if ( subStepResults.size() > 0 )
 		{
 	    	aStream.write("      <substeps>\n");
 	    	if ( mySubTestStepResultXmlWriter == null )
@@ -119,13 +118,11 @@ public class TestStepResultXmlWriter
 	    		mySubTestStepResultXmlWriter = new TestStepResultXmlWriter();
 	    	}
 
-			for (int key = 0; key < subSteps.size(); key++)
+	    	Iterator<TestStepResult> subStepResultsItr = subStepResults.iterator();
+	    	while (subStepResultsItr.hasNext())
 	    	{
-				TestStepResult tsResult = subSteps.get(key);
-				if ( tsResult != null )
-				{
-					mySubTestStepResultXmlWriter.printXml(subSteps.get(key), aStream, aLogDir);
-				}
+				TestStepResult tsResult = subStepResultsItr.next();
+				mySubTestStepResultXmlWriter.printXml(tsResult, aStream, aLogDir);
 	    	}
 			
 	    	aStream.write("      </substeps>\n");

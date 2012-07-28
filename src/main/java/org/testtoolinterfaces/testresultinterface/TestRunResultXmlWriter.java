@@ -19,9 +19,6 @@ import org.testtoolinterfaces.utils.Warning;
 /**
  * @author Arjan Kranenburg
  *
- * The TestRunResultXmlWriter includes a TestGroupResultXmlWriter, so we implement
- * the TestGroupResultWriter interface as well in order to be updated of changes in 
- * the Test Group Result inside the Test Run Result. 
  */
 public class TestRunResultXmlWriter implements TestRunResultWriter
 {
