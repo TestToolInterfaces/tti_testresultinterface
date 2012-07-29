@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.testtoolinterfaces</groupId>
   <artifactId>testresultinterface</artifactId>
-  <version>0.3.3-SNAPSHOT</version>
+  <version>0.3.3</version>
   <name>Test Tool Interfaces - Test Result Interface</name>
   <description>Test Result Interface for Test Tool Interfaces</description>
   <url>http://www.testtoolinterfaces.org/</url>
@@ -39,8 +39,8 @@
   <dependencies>
   	<dependency>
   	  <groupId>junit</groupId>
-  	  <artifactId>junit</artifactId>
-  	  <version>4.8.2</version>
+  	  <artifactId>junit-dep</artifactId>
+  	  <version>4.10</version>
   	</dependency>
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
@@ -55,7 +55,7 @@
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
   	  <artifactId>testresult</artifactId>
-  	  <version>0.3.3-SNAPSHOT</version>
+  	  <version>0.3.3</version>
   	</dependency>
   </dependencies>
 
