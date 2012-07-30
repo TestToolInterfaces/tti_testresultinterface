@@ -118,7 +118,7 @@ public class TestStepResultXmlWriter
     	String comment = aResult.getComment();
     	if ( ! comment.isEmpty() ) { aStream.write( indent + "  <comment>" + comment + "</comment>\n"); }
 
-    	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), "  ");
+    	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), indent + "  ");
 		aStream.write( indent + "</teststep>\n");
 	}
 	
