@@ -101,28 +101,28 @@ public class TestGroupResultXmlHandler extends XmlHandler
 		this.reset();
 
 	    myDescriptionXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_DESCRIPTION);
-		this.addElementHandler(ELEMENT_DESCRIPTION, myDescriptionXmlHandler);
+		this.addElementHandler(myDescriptionXmlHandler);
 
      	myRequirementIdXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_REQUIREMENT);
-		this.addElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
+		this.addElementHandler(myRequirementIdXmlHandler);
 
 		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_PREPARE, anInterfaceList);
-		this.addElementHandler(ELEMENT_PREPARE, myPrepareResultXmlHandler);
+		this.addElementHandler(myPrepareResultXmlHandler);
 
 		myTestCaseResultLinkXmlHandler = new TestCaseResultLinkXmlHandler(anXmlReader);
-		this.addElementHandler(TestCaseResultLinkXmlHandler.ELEMENT_START, myTestCaseResultLinkXmlHandler);
+		this.addElementHandler(myTestCaseResultLinkXmlHandler);
 
 		myTestGroupResulLinkXmlHandler = new TestGroupResultLinkXmlHandler(anXmlReader);
-		this.addElementHandler(TestGroupResultLinkXmlHandler.ELEMENT_START, myTestGroupResulLinkXmlHandler);
+		this.addElementHandler(myTestGroupResulLinkXmlHandler);
 
 		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler(anXmlReader, ELEMENT_RESTORE, anInterfaceList);
-		this.addElementHandler(ELEMENT_RESTORE, myRestoreResultXmlHandler);
+		this.addElementHandler(myRestoreResultXmlHandler);
 
 		mySummaryXmlHandler = new SummaryResultXmlHandler(anXmlReader);
-		this.addElementHandler(SummaryResultXmlHandler.ELEMENT_START, mySummaryXmlHandler);
+		this.addElementHandler(mySummaryXmlHandler);
 
 		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
-		this.addElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		this.addElementHandler(myLogFileXmlHandler);
 	}
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)

@@ -54,10 +54,10 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		reset();
 
 		myTestGroupLinkXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_LINK);
-		this.addElementHandler(ELEMENT_LINK, myTestGroupLinkXmlHandler);
+		this.addElementHandler(myTestGroupLinkXmlHandler);
 
 		mySummaryXmlHandler = new SummaryResultXmlHandler(anXmlReader);
-		this.addElementHandler(SummaryResultXmlHandler.ELEMENT_START, mySummaryXmlHandler);
+		this.addElementHandler(mySummaryXmlHandler);
 	}
 
 	@Override

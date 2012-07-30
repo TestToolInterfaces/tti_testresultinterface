@@ -92,34 +92,34 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		this.reset();
 
 		myDescriptionXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, DESCRIPTION_ELEMENT);
-		this.addElementHandler(DESCRIPTION_ELEMENT, myDescriptionXmlHandler);
+		this.addElementHandler(myDescriptionXmlHandler);
 
      	myRequirementIdXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_REQUIREMENT);
-		this.addElementHandler(ELEMENT_REQUIREMENT, myRequirementIdXmlHandler);
+		this.addElementHandler(myRequirementIdXmlHandler);
 
 		myPrepareResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                  PREPARE_ELEMENT,
 		                                                                  anInterfaceList );
-		this.addElementHandler(PREPARE_ELEMENT, myPrepareResultXmlHandler);
+		this.addElementHandler(myPrepareResultXmlHandler);
 
 		myExecutionResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                    EXECUTE_ELEMENT,
 		                                                                    anInterfaceList );
-		this.addElementHandler(EXECUTE_ELEMENT, myExecutionResultXmlHandler);
+		this.addElementHandler(myExecutionResultXmlHandler);
 
 		myRestoreResultXmlHandler = new TestStepSequenceResultXmlHandler( anXmlReader,
 		                                                                  RESTORE_ELEMENT,
 		                                                                  anInterfaceList );
-		this.addElementHandler(RESTORE_ELEMENT, myRestoreResultXmlHandler);
+		this.addElementHandler(myRestoreResultXmlHandler);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
-		this.addElementHandler(RESULT_ELEMENT, myResultXmlHandler);
+		this.addElementHandler(myResultXmlHandler);
 
 		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
-		this.addElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		this.addElementHandler(myLogFileXmlHandler);
 
 		myCommentXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMENT_ELEMENT);
-		this.addElementHandler(COMMENT_ELEMENT, myCommentXmlHandler);
+		this.addElementHandler(myCommentXmlHandler);
 	}
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
