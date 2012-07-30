@@ -20,13 +20,16 @@ import org.testtoolinterfaces.utils.XmlHandler;
 /**
  * @author Arjan Kranenburg 
  * 
- * <action sequence=...>
+ * <teststep sequence=...>
  *  <description>
  *  ...
  *  </description>
  *  <command>
  *  ...
  *  </command>
+ *  <substeps>
+ *  ...
+ *  </substeps>
  * </action>
  */
 public class ActionTypeResultXmlHandler extends XmlHandler
@@ -37,9 +40,12 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	private static final String COMMAND_ELEMENT = "command";
 	private static final String RESULT_ELEMENT = "result";
 
+	private static final String SUB_STEPS_ELEMENT = "substeps";
+
 	private GenericTagAndStringXmlHandler myCommandXmlHandler;
 	private GenericTagAndStringXmlHandler myResultXmlHandler;
 	private LogFileXmlHandler myLogFileXmlHandler;
+	private TestStepSequenceResultXmlHandler mySubstepResultXmlHandler;
 
 	private TestInterfaceList myInterfaceList;
 
@@ -55,16 +61,19 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		Trace.println(Trace.CONSTRUCTOR, "ActionTypeResultXmlHandler( anXmlreader, " + aTag + " )", true);
 
 		myInterfaceList = anInterfaceList;
-		myInterface = anInterfaceList.getInterface( "Unknown" );
 
 		myCommandXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, COMMAND_ELEMENT);
-		this.addElementHandler(COMMAND_ELEMENT, myCommandXmlHandler);
+		this.addElementHandler(myCommandXmlHandler);
 
 		myResultXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, RESULT_ELEMENT);
-		this.addElementHandler(RESULT_ELEMENT, myResultXmlHandler);
+		this.addElementHandler(myResultXmlHandler);
 
 		myLogFileXmlHandler = new LogFileXmlHandler(anXmlReader);
-		this.addElementHandler(LogFileXmlHandler.START_ELEMENT, myLogFileXmlHandler);
+		this.addElementHandler(myLogFileXmlHandler);
+		
+		mySubstepResultXmlHandler = null; // Created when needed to prevent loops
+		
+		reset();
 }
 
     public void processElementAttributes(String aQualifiedName, Attributes att)
@@ -111,6 +120,13 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	@Override
 	public void handleGoToChildElement(String aQualifiedName)
 	{
+     	if ( mySubstepResultXmlHandler == null && aQualifiedName.equalsIgnoreCase(SUB_STEPS_ELEMENT) )
+     	{
+     		// We'll create a TestStepSequenceResultXmlHandler for Sub steps only when we need it.
+     		// Otherwise it would create an endless loop.
+     		mySubstepResultXmlHandler = new TestStepSequenceResultXmlHandler( this.getXmlReader(), SUB_STEPS_ELEMENT, myInterfaceList );
+   			this.addElementHandler(mySubstepResultXmlHandler);
+    	}
 	}
 
 	@Override
@@ -161,5 +177,6 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 		mySequence = 0;
+		myInterface = myInterfaceList.getInterface( "Unknown" );
 	}
 }

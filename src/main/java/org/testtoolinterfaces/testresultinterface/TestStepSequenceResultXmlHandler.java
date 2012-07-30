@@ -13,6 +13,7 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 {
     private ArrayList<TestStepResult> mySteps;
 
+	private ActionTypeResultXmlHandler myTestStepXmlHandler;
 	private ActionTypeResultXmlHandler myActionXmlHandler;
 	private ActionTypeResultXmlHandler myCheckXmlHandler;
 
@@ -24,6 +25,9 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 		Trace.println(Trace.CONSTRUCTOR);
 
     	this.reset();
+
+    	myTestStepXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "teststep", anInterfaceList);
+		this.addElementHandler(myTestStepXmlHandler);
 
     	//TODO Suspicious: replaced TestStep.StepType.action with "action"
     	myActionXmlHandler = new ActionTypeResultXmlHandler(anXmlReader, "action", anInterfaceList);
@@ -57,6 +61,11 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 												XmlHandler aChildXmlHandler)
 	{
 		Trace.println(Trace.SUITE);
+    	if (aQualifiedName.equalsIgnoreCase("teststep"))
+    	{
+    		mySteps.add(myTestStepXmlHandler.getActionStep());
+    		myTestStepXmlHandler.reset();
+    	}
     	//TODO Suspicious: replaced TestStep.StepType.action with "action"
     	if (aQualifiedName.equalsIgnoreCase("action"))
     	{

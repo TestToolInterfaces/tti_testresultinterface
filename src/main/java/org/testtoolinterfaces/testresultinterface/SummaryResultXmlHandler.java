@@ -49,19 +49,19 @@ public class SummaryResultXmlHandler extends XmlHandler
 		reset();
 
 		myTotalXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_TOTAL);
-		this.addElementHandler(ELEMENT_TOTAL, myTotalXmlHandler);
+		this.addElementHandler(myTotalXmlHandler);
 
 		myPassedXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_PASSED);
-		this.addElementHandler(ELEMENT_PASSED, myPassedXmlHandler);
+		this.addElementHandler(myPassedXmlHandler);
 
 		myFailedXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_FAILED);
-		this.addElementHandler(ELEMENT_FAILED, myFailedXmlHandler);
+		this.addElementHandler(myFailedXmlHandler);
 
 		myUnknownXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_UNKNOWN);
-		this.addElementHandler(ELEMENT_UNKNOWN, myUnknownXmlHandler);
+		this.addElementHandler(myUnknownXmlHandler);
 
 		myErrorXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_ERROR);
-		this.addElementHandler(ELEMENT_ERROR, myErrorXmlHandler);
+		this.addElementHandler(myErrorXmlHandler);
 	}
 
 	@Override

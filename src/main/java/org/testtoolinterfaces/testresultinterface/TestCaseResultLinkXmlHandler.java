@@ -55,10 +55,10 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		reset();
 
 		myTestCaseLinkXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_LINK);
-		this.addElementHandler(ELEMENT_LINK, myTestCaseLinkXmlHandler);
+		this.addElementHandler(myTestCaseLinkXmlHandler);
 
 		myVerdictXmlHandler = new GenericTagAndStringXmlHandler(anXmlReader, ELEMENT_VERDICT);
-		this.addElementHandler(ELEMENT_VERDICT, myVerdictXmlHandler);
+		this.addElementHandler(myVerdictXmlHandler);
 	}
 
 	@Override
