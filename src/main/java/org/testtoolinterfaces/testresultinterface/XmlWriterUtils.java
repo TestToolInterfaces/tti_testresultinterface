@@ -106,9 +106,9 @@ public class XmlWriterUtils
 	public static void printXmlRequirement(OutputStreamWriter aStream, String aRequirementId, String anIndent) throws IOException
 	{
 	    Trace.println(Trace.UTIL);
-    	aStream.write(anIndent + "<requirementid>");
+    	aStream.write(anIndent + "<requirementId>");
     	aStream.write(aRequirementId);
-    	aStream.write("</requirementid>\n");
+    	aStream.write("</requirementId>\n");
 	}
 	
 	public static void copyXsl(File aSourceDir, File aTargetLogDir)
