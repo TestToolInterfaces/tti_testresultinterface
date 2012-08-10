@@ -3,6 +3,7 @@ package org.testtoolinterfaces.testresultinterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestResult;
@@ -158,22 +159,13 @@ public class TestCaseResultXmlHandler extends XmlHandler
 
 		TestCase testCase = new TestCaseImpl( myTestCaseId,
 	                                          myDescription,
-	                                          0,
+	                                          0, //sequence
 	                                          myRequirements,
-       										  null,
-       										  null,
-       										  null,
-	                                          new Hashtable<String, String>(),
-       										  new Hashtable<String, String>() ); // testSteps are null, but added below
-
-//		String aTestCaseId,
-//        Hashtable<String, String> anAnyAttributes,
-//		String aDescription,
-//		ArrayList<String> aRequirementIds,
-//		TestStepArrayList aPrepareSteps,
-//		TestStepArrayList anExecutionSteps,
-//		TestStepArrayList aRestoreSteps,
-//		Hashtable<String, String> anAnyElements )
+       										  null, //prepare
+       										  null, //execution
+       										  null, //restore
+	                                          new Hashtable<String, String>(),   // anyAttributes
+       										  new Hashtable<String, String>() ); // anyElements 
 
        	TestCaseResult testCaseResult = new TestCaseResult( testCase );
        	testCaseResult.setResult(myResult);
@@ -188,20 +180,20 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		    }
       	}
 
-	    for (int key = 0; key < myPrepareSteps.size() ; key++)
-	    {
-	    	testCaseResult.addInitialization( myPrepareSteps.get(key) );
-	    }
+       	for( TestStepResult tsResult : myPrepareSteps )
+       	{
+       		testCaseResult.addInitialization(tsResult);
+       	}
 
-	    for (int key = 0; key < myExecutionSteps.size() ; key++)
-	    {
-	    	testCaseResult.addExecution( myExecutionSteps.get(key) );
-	    }
+       	for( TestStepResult tsResult : myExecutionSteps )
+       	{
+       		testCaseResult.addExecution(tsResult);
+       	}
 
-	    for (int key = 0; key < myRestoreSteps.size() ; key++)
-	    {
-	    	testCaseResult.addRestore( myRestoreSteps.get(key) );
-	    }
+       	for( TestStepResult tsResult : myRestoreSteps )
+       	{
+       		testCaseResult.addRestore(tsResult);
+       	}
 
 		return testCaseResult;
     }

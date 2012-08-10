@@ -208,7 +208,6 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	public TestStepResult getActionStep()
 	{
 		Trace.println(Trace.SUITE);
-
 		TestStep testStep = new TestStepCommand( mySequence,
 												 myDescription,
 		                                         myCommand,
