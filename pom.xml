@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.testtoolinterfaces</groupId>
   <artifactId>testresultinterface</artifactId>
-  <version>0.3.6</version>
+  <version>0.3.7-SNAPSHOT</version>
   <name>Test Tool Interfaces - Test Result Interface</name>
   <description>Test Result Interface for Test Tool Interfaces</description>
   <url>http://www.testtoolinterfaces.org/</url>
@@ -23,9 +23,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:ssh://ttinterfaces.git.sourceforge.net/gitroot/ttinterfaces/java-testresultinterface</connection>
-    <developerConnection>scm:git:ssh://ttinterfaces.git.sourceforge.net/gitroot/ttinterfaces/java-testresultinterface</developerConnection>
-    <url>ssh://ttinterfaces.git.sourceforge.net/gitroot/ttinterfaces/java-testresultinterface</url>
+    <connection>scm:git:git@github.com:ArjanKranenburg/tti_testresultinterface.git</connection>
+    <developerConnection>scm:git:git@github.com:ArjanKranenburg/tti_testresultinterface.git</developerConnection>
+    <url>git@github.com:ArjanKranenburg/tti_testresultinterface.git</url>
   </scm>
  
   <developers>
@@ -46,7 +46,7 @@
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
   	  <artifactId>utils</artifactId>
-  	  <version>0.1.6</version>
+  	  <version>0.1.7-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
