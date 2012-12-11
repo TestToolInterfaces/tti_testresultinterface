@@ -39,7 +39,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 
 	private String myTestGroupId;
 	private String myType;
-	private int mySequence;
+	private int mySequence=0;
 
 	private File myTgResultLink;
 	private ResultSummary myResult;
@@ -109,7 +109,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 		TestGroupLink tgLink = new TestGroupLink( myTestGroupId,
-		                                          mySequence,
+		                                          mySequence++,
 		                                          new TestLinkImpl("unknown", myType),
 		                                          new Hashtable<String, String>(),
 		                                          new Hashtable<String, String>() );
@@ -122,7 +122,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		Trace.println(Trace.UTIL);
 		myTestGroupId = "";
 		myType = "";
-		mySequence = 0;
+//		mySequence = 0;
 
 		myTgResultLink = new File( "unknown" );
 		myResult = new ResultSummary(0, 0, 0, 0);

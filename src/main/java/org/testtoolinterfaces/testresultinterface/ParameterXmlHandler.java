@@ -32,7 +32,7 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 
 	private String myParameterId;
 	private String myType;
-	private int mySequence;
+	private int mySequence=0;
 
 	public ParameterXmlHandler( XMLReader anXmlReader )
 	{
@@ -82,20 +82,20 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 		Parameter param;
 		if ( myType.equalsIgnoreCase("value") )
 		{
-			param = new ParameterImpl( myParameterId, this.getValue(), mySequence );
+			param = new ParameterImpl( myParameterId, this.getValue(), mySequence++ );
 		}
 		else if ( myType.equalsIgnoreCase("variable") )
 		{
-			param = new ParameterVariable( myParameterId, this.getValue(), mySequence );
+			param = new ParameterVariable( myParameterId, this.getValue(), mySequence++ );
 		}
 		else if ( myType.equalsIgnoreCase("hash") )
 		{
-			param = new ParameterHash( myParameterId, new ParameterArrayList(), mySequence );
+			param = new ParameterHash( myParameterId, new ParameterArrayList(), mySequence++ );
 		}
 		else
 		{
 			// unknown, but treat as a simple value
-			param = new ParameterImpl( myParameterId, this.getValue(), mySequence );
+			param = new ParameterImpl( myParameterId, this.getValue(), mySequence++ );
 		}
 
 		ParameterResult paramResult = new ParameterResult(param);
@@ -108,6 +108,6 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 		Trace.println(Trace.UTIL);
 		myParameterId = "";
 		myType = "";
-		mySequence = 0;
+//		mySequence = 0;
 	}
 }

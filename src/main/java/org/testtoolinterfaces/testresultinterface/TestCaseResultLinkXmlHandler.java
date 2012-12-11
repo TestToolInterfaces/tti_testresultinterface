@@ -40,7 +40,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 
 	private String myTestCaseId;
 	private String myType;
-	private int mySequence;
+	private int mySequence=0;
 
 	private File myTcLink;
 	private VERDICT myResult;
@@ -110,7 +110,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 	{
 		Trace.println(Trace.SUITE);
 		TestCaseLink tcLink = new TestCaseLink( myTestCaseId,
-		                                        mySequence,
+		                                        mySequence++,
 		                                        new TestLinkImpl("unknown", myType),
 		                                        new Hashtable<String, String>(),
 		                                        new Hashtable<String, String>() );
@@ -123,7 +123,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		Trace.println(Trace.UTIL);
 		myTestCaseId = "";
 		myType = "";
-		mySequence = 0;
+//		mySequence = 0;
 
 		myTcLink = new File( "unknown" );
 		myResult = VERDICT.UNKNOWN;
