@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.TestStepSelectionResult;
 import org.testtoolinterfaces.testsuite.Parameter;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.ParameterHash;
@@ -129,6 +130,12 @@ public class TestStepResultXmlWriter
 		Trace.println(Trace.UTIL);
 
 		ArrayList<TestStepResult> subStepResults = aResult.getSubSteps();
+		
+		if ( aResult instanceof TestStepSelectionResult ) {
+			TestStepResult ifResult = ((TestStepSelectionResult) aResult).getIfStepResult();
+			subStepResults.add(0, ifResult);
+		}
+		
 		if ( subStepResults.size() > 0 )
 		{
 			String indent = repeat( ' ', myIndentLevel + 2 );
