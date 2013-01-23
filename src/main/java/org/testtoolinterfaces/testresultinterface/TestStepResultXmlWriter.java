@@ -133,6 +133,7 @@ public class TestStepResultXmlWriter
 		
 		if ( aResult instanceof TestStepSelectionResult ) {
 			TestStepResult ifResult = ((TestStepSelectionResult) aResult).getIfStepResult();
+			ifResult.setComment("The if-step. It does not influence the verdict.");
 			subStepResults.add(0, ifResult);
 		}
 		
