@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.testtoolinterfaces</groupId>
   <artifactId>testresultinterface</artifactId>
-  <version>0.3.8</version>
+  <version>0.3.9-SNAPSHOT</version>
   <name>Test Tool Interfaces - Test Result Interface</name>
   <description>Test Result Interface for Test Tool Interfaces</description>
   <url>http://www.testtoolinterfaces.org/</url>
