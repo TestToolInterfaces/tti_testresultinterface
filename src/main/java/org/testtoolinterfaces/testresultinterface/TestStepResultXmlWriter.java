@@ -134,27 +134,38 @@ public class TestStepResultXmlWriter
 		if ( aResult instanceof TestStepSelectionResult ) {
 			TestStepResult ifResult = ((TestStepSelectionResult) aResult).getIfStepResult();
 			ifResult.setComment("The if-step. It does not influence the verdict.");
-			subStepResults.add(0, ifResult);
+//			subStepResults.add(0, ifResult);
+
+			String indent = repeat( ' ', myIndentLevel + 2 );
+	    	aStream.write( indent + "<ifstep>\n");
+
+			this.getSubTestStepResultWriter().printXml(ifResult, aStream, aLogDir);
+
+			aStream.write( indent + "</ifstep>\n");
 		}
 		
 		if ( subStepResults.size() > 0 )
 		{
 			String indent = repeat( ' ', myIndentLevel + 2 );
 	    	aStream.write( indent + "<substeps>\n");
-	    	if ( mySubTestStepResultXmlWriter == null )
-	    	{
-	    		mySubTestStepResultXmlWriter = new TestStepResultXmlWriter( myIndentLevel + 2 );
-	    	}
 
 	    	Iterator<TestStepResult> subStepResultsItr = subStepResults.iterator();
 	    	while (subStepResultsItr.hasNext())
 	    	{
 				TestStepResult tsResult = subStepResultsItr.next();
-				mySubTestStepResultXmlWriter.printXml(tsResult, aStream, aLogDir);
+				this.getSubTestStepResultWriter().printXml(tsResult, aStream, aLogDir);
 	    	}
 			
 	    	aStream.write( indent + "</substeps>\n");
 		}	
+	}
+
+	private TestStepResultXmlWriter getSubTestStepResultWriter() {
+		if ( mySubTestStepResultXmlWriter == null )
+		{
+			mySubTestStepResultXmlWriter = new TestStepResultXmlWriter( myIndentLevel + 4 );
+		}
+		return mySubTestStepResultXmlWriter;
 	}
 
 	private static String repeat(char c,int i)

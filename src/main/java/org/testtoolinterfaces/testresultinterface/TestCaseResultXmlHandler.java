@@ -3,7 +3,6 @@ package org.testtoolinterfaces.testresultinterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestResult;
@@ -163,10 +162,8 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	                                          myRequirements,
        										  null, //prepare
        										  null, //execution
-       										  null, //restore
-	                                          new Hashtable<String, String>(),   // anyAttributes
-       										  new Hashtable<String, String>() ); // anyElements 
-
+       										  null );
+		
        	TestCaseResult testCaseResult = new TestCaseResult( testCase );
        	testCaseResult.setResult(myResult);
        	testCaseResult.setComment(myComment);

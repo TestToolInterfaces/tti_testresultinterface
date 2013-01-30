@@ -162,10 +162,8 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	                                          myRequirements,
        										  null,
        										  null,
-       										  null,
-	                                          new Hashtable<String, String>(),
-       										  new Hashtable<String, String>() ); // testSteps are null, but added below
-
+       										  null);
+		
        	TestGroupResult testGroupResult = new TestGroupResult( testGroup );
        	testGroupResult.setResult(myResult);
        	testGroupResult.setComment(myComment);
