@@ -1,7 +1,6 @@
 package org.testtoolinterfaces.testresultinterface;
 
 import java.io.File;
-import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestResult.VERDICT;
@@ -111,9 +110,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		Trace.println(Trace.SUITE);
 		TestCaseLink tcLink = new TestCaseLink( myTestCaseId,
 		                                        mySequence++,
-		                                        new TestLinkImpl("unknown", myType),
-		                                        new Hashtable<String, String>(),
-		                                        new Hashtable<String, String>() );
+		                                        new TestLinkImpl("unknown", myType) );
 		TestCaseResultLink tcResultLink = new TestCaseResultLink(tcLink, myResult, myTcLink);
 		return tcResultLink;
 	}

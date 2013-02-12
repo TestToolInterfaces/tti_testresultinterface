@@ -1,7 +1,6 @@
 package org.testtoolinterfaces.testresultinterface;
 
 import java.io.File;
-import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
@@ -110,9 +109,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		Trace.println(Trace.SUITE);
 		TestGroupLink tgLink = new TestGroupLink( myTestGroupId,
 		                                          mySequence++,
-		                                          new TestLinkImpl("unknown", myType),
-		                                          new Hashtable<String, String>(),
-		                                          new Hashtable<String, String>() );
+		                                          new TestLinkImpl("unknown", myType) );
 		TestGroupResultLink tgResultLink = new TestGroupResultLink(tgLink, myResult, myTgResultLink);
 		return tgResultLink;
 	}
