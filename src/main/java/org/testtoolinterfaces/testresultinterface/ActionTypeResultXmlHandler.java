@@ -8,17 +8,16 @@ import java.util.Iterator;
 import org.testtoolinterfaces.testresult.ParameterResult;
 import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.impl.TestStepCommandResultImpl;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.TestInterface;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.testsuite.TestStep;
 import org.testtoolinterfaces.testsuite.TestStepCommand;
-import org.xml.sax.Attributes;
-import org.xml.sax.XMLReader;
-
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.XmlHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.XMLReader;
 
 /**
  * @author Arjan Kranenburg 
@@ -208,12 +207,12 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	public TestStepResult getActionStep()
 	{
 		Trace.println(Trace.SUITE);
-		TestStep testStep = new TestStepCommand( mySequence,
+		TestStepCommand testStep = new TestStepCommand( mySequence,
 												 myDescription,
 		                                         myCommand,
 		                                         myInterface,
 		                                         myParameters );
-		TestStepResult testStepResult = new TestStepResult( testStep );
+		TestStepResult testStepResult = new TestStepCommandResultImpl( testStep );
 		testStepResult.setDisplayName(myDisplayName);
 		testStepResult.setResult( myResult );
 		testStepResult.setParameterResults(myParameterResults);

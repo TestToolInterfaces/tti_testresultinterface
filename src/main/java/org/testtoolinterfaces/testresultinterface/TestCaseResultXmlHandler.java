@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.impl.TestCaseResultImpl;
 import org.testtoolinterfaces.testsuite.TestCase;
 import org.testtoolinterfaces.testsuite.TestCaseImpl;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
@@ -164,7 +165,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
        										  null, //execution
        										  null );
 		
-       	TestCaseResult testCaseResult = new TestCaseResult( testCase );
+       	TestCaseResult testCaseResult = new TestCaseResultImpl( testCase );
        	testCaseResult.setResult(myResult);
        	testCaseResult.setComment(myComment);
 

@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestResult.VERDICT;
+import org.testtoolinterfaces.testresult.impl.TestCaseResultLinkImpl;
 import org.testtoolinterfaces.testsuite.TestCaseLink;
 import org.testtoolinterfaces.testsuite.TestLinkImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
@@ -111,7 +112,7 @@ public class TestCaseResultLinkXmlHandler extends XmlHandler
 		TestCaseLink tcLink = new TestCaseLink( myTestCaseId,
 		                                        mySequence++,
 		                                        new TestLinkImpl("unknown", myType) );
-		TestCaseResultLink tcResultLink = new TestCaseResultLink(tcLink, myResult, myTcLink);
+		TestCaseResultLink tcResultLink = new TestCaseResultLinkImpl(tcLink, myResult, myTcLink);
 		return tcResultLink;
 	}
 

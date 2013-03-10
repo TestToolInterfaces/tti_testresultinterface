@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
+import org.testtoolinterfaces.testresult.impl.TestGroupResultLinkImpl;
 import org.testtoolinterfaces.testsuite.TestGroupLink;
 import org.testtoolinterfaces.testsuite.TestLinkImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
@@ -110,7 +111,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		TestGroupLink tgLink = new TestGroupLink( myTestGroupId,
 		                                          mySequence++,
 		                                          new TestLinkImpl("unknown", myType) );
-		TestGroupResultLink tgResultLink = new TestGroupResultLink(tgLink, myResult, myTgResultLink);
+		TestGroupResultLink tgResultLink = new TestGroupResultLinkImpl(tgLink, myResult, myTgResultLink);
 		return tgResultLink;
 	}
 

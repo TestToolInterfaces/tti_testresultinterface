@@ -51,12 +51,12 @@
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
   	  <artifactId>testsuite</artifactId>
-  	  <version>0.3.8</version>
+  	  <version>0.3.10</version>
   	</dependency>
   	<dependency>
   	  <groupId>org.testtoolinterfaces</groupId>
   	  <artifactId>testresult</artifactId>
-  	  <version>0.3.10</version>
+  	  <version>0.3.13-SNAPSHOT</version>
   	</dependency>
   </dependencies>
 

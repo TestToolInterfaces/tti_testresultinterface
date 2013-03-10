@@ -9,7 +9,9 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.testtoolinterfaces.testresult.TestStepCommandResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.TestStepScriptResult;
 import org.testtoolinterfaces.testresult.TestStepSelectionResult;
 import org.testtoolinterfaces.testsuite.Parameter;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
@@ -74,12 +76,16 @@ public class TestStepResultXmlWriter
     	aStream.write( indent + "  <description>");
     	aStream.write(description);
     	aStream.write("</description>\n");
-	    
-    	String command = aResult.getCommand();
-    	if ( ! command.isEmpty() ) { aStream.write( indent + "  <command>" + command + "</command>\n"); }
 
-    	String script = aResult.getScript();
-    	if ( ! script.isEmpty() ) { aStream.write( indent + "  <script>" + script + "</script>\n"); }
+    	if ( aResult instanceof TestStepCommandResult ) {
+        	String command = ((TestStepCommandResult) aResult).getCommand();
+    		aStream.write( indent + "  <command>" + command + "</command>\n");
+    	}
+
+    	if ( aResult instanceof TestStepScriptResult ) {
+        	String script = ((TestStepScriptResult) aResult).getScript();
+        	aStream.write( indent + "  <script>" + script + "</script>\n");
+    	}
     	aStream.write( indent + "  <displayName>" + aResult.getDisplayName() + "</displayName>\n");
 
     	printSubTestStep( aResult, aStream, aLogDir );

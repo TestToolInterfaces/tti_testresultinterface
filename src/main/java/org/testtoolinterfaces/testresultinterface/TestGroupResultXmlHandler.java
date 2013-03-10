@@ -7,8 +7,8 @@ import java.util.Hashtable;
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
-import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.impl.TestGroupResultImpl;
 import org.testtoolinterfaces.testsuite.TestGroup;
 import org.testtoolinterfaces.testsuite.TestGroupImpl;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
@@ -67,7 +67,6 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	private int myCurrentSequence;
 	private String myDescription;
 	private ArrayList<String> myRequirements;
-	private TestResult.VERDICT myResult;
 	private String myComment;
 	private Hashtable<String, String> myLogFiles;
 
@@ -164,8 +163,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
        										  null,
        										  null);
 		
-       	TestGroupResult testGroupResult = new TestGroupResult( testGroup );
-       	testGroupResult.setResult(myResult);
+       	TestGroupResult testGroupResult = new TestGroupResultImpl( testGroup );
        	testGroupResult.setComment(myComment);
 
        	if (!myLogFiles.isEmpty())
@@ -214,7 +212,6 @@ public class TestGroupResultXmlHandler extends XmlHandler
 		myCurrentSequence = 0;
 		myDescription = "";
 		myRequirements = new ArrayList<String>();
-		myResult = TestResult.UNKNOWN;
 		myComment = "";
 
 		myLogFiles = new Hashtable<String, String>();
