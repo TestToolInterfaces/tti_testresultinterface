@@ -182,12 +182,12 @@ public class TestGroupResultXmlHandler extends XmlHandler
 
 	    for (int key = 0; key < myTestGroupResultLinks.size() ; key++)
 	    {
-	    	testGroupResult.addTestGroup( myTestGroupResultLinks.get(key) );
+	    	testGroupResult.addTestExecItemResultLink( myTestGroupResultLinks.get(key) );
 	    }
 
 	    for (int key = 0; key < myTestCaseResultLinks.size() ; key++)
 	    {
-	    	testGroupResult.addTestCase( myTestCaseResultLinks.get(key) );
+	    	testGroupResult.addTestExecItemResultLink( myTestCaseResultLinks.get(key) );
 	    }
 
 	    for (int key = 0; key < myRestoreSteps.size() ; key++)

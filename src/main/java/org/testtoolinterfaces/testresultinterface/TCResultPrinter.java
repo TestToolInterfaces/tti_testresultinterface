@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.TestStepResultBase;
 import org.testtoolinterfaces.testsuite.LooseTestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
 import org.testtoolinterfaces.utils.Trace;
@@ -16,7 +16,7 @@ import org.testtoolinterfaces.utils.Trace;
  * @author Arjan
  *
  * Simpel tool to print the Test Case Result File
- * It serves as well as a debug tool for the structure of the result file.
+ * It also serves as a debug tool for the structure of the result file.
  */
 public class TCResultPrinter
 {
@@ -48,7 +48,7 @@ public class TCResultPrinter
 		System.out.println( aTcResult.getDescription() );
 		System.out.println( "Sequence Number: " + aTcResult.getSequenceNr() );
 		System.out.println( "=================== Preparation =====================" );
-		Hashtable<Integer, TestStepResult> prepResults = aTcResult.getPrepareResults();
+		Hashtable<Integer,TestStepResultBase> prepResults = aTcResult.getPrepareResults();
 		System.out.println( "=================== Execution =======================" );
 		System.out.println( "=================== Cleanup =========================" );
 		System.out.println( "=====================================================" );

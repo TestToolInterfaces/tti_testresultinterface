@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestStepResult;
+import org.testtoolinterfaces.testresult.TestStepResultBase;
 import org.testtoolinterfaces.testsuite.LooseTestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
 
@@ -41,21 +41,21 @@ public class TestCaseResultReaderTester extends TestCase
 	public void testCase_testCaseResultPrepare()
 	{
 		TestCaseResult tcResult = parseFile( "testCaseResult.xml" );
-		Hashtable<Integer, TestStepResult> prepareResults = tcResult.getPrepareResults();
+		Hashtable<Integer, TestStepResultBase> prepareResults = tcResult.getPrepareResults();
     	Assert.assertEquals("Incorrect number of prepare results", 1, prepareResults.size());
 	}
 	
 	public void testCase_testCaseResultExecution()
 	{
 		TestCaseResult tcResult = parseFile( "testCaseResult.xml" );
-		Hashtable<Integer, TestStepResult> executionResults = tcResult.getExecutionResults();
+		Hashtable<Integer, TestStepResultBase> executionResults = tcResult.getExecutionResults();
     	Assert.assertEquals("Incorrect number of execution results", 5, executionResults.size());
 	}
 	
 	public void testCase_testCaseResultRestore()
 	{
 		TestCaseResult tcResult = parseFile( "testCaseResult.xml" );
-		Hashtable<Integer, TestStepResult> restoreResults = tcResult.getRestoreResults();
+		Hashtable<Integer, TestStepResultBase> restoreResults = tcResult.getRestoreResults();
     	Assert.assertEquals("Incorrect number of execution results", 4, restoreResults.size());
 	}
 

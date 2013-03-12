@@ -3,16 +3,15 @@
  */
 package org.testtoolinterfaces.testresultinterface;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestStepResult;
-
+import org.testtoolinterfaces.testresult.TestStepResultBase;
 import org.testtoolinterfaces.utils.Trace;
 import org.testtoolinterfaces.utils.Warning;
 
@@ -101,37 +100,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 
 			XmlWriterUtils.printXmlDeclaration(xmlFile, "testcase.xsl");
 
-			xmlFile.write("<testcase\n");
-			xmlFile.write("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-			xmlFile.write("    xsi:noNamespaceSchemaLocation=\"TestResult_Case.xsd\"\n");
-			xmlFile.write("    xsdMain='0'\n");
-			xmlFile.write("    xsdSub='2'\n");
-			xmlFile.write("    xsdPatch='0'\n");
-			xmlFile.write("    id='" + aTestCaseResult.getId() + "'\n");
-			xmlFile.write("    sequence='" + aTestCaseResult.getSequenceNr() + "'\n");
-			xmlFile.write(">\n");
-			
-	    	printDescription(xmlFile, aTestCaseResult.getDescription(), "");
-	    	printRequirements(xmlFile, aTestCaseResult.getRequirements(), "");
-
-	    	xmlFile.write("  <prepare>\n");
-	    	printStepResults(xmlFile, aTestCaseResult.getPrepareResults(), logDir);
-	    	xmlFile.write("  </prepare>\n");
-
-	    	xmlFile.write("  <execute>\n");
-	    	printStepResults(xmlFile, aTestCaseResult.getExecutionResults(), logDir);
-	    	xmlFile.write("  </execute>\n");
-
-	    	xmlFile.write("  <restore>\n");
-	    	printStepResults(xmlFile, aTestCaseResult.getRestoreResults(), logDir);
-	    	xmlFile.write("  </restore>\n");
-
-	    	xmlFile.write("  <result>" + aTestCaseResult.getResult().toString() + "</result>\n");
-
-	    	XmlWriterUtils.printXmlLogFiles(aTestCaseResult.getLogs(), xmlFile, logDir.getAbsolutePath(), "  ");
-	    	XmlWriterUtils.printXmlComment(aTestCaseResult, xmlFile, "  ");
-
-	    	xmlFile.write("</testcase>\n");
+			printTestCase(xmlFile, "", aTestCaseResult, logDir);
 			xmlFile.flush();
 		}
 		catch (IOException exception)
@@ -139,6 +108,48 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 			Warning.println("Saving Test Case Result XML failed: " + exception.getMessage());
 			Trace.print(Trace.SUITE, exception);
 		}
+	}
+
+	/**
+	 * @param aStream
+	 * @param anIndent
+	 * @param aTestCaseResult
+	 * @param logDir
+	 * @throws IOException
+	 */
+	public void printTestCase(OutputStreamWriter aStream, String anIndent,
+			TestCaseResult aTestCaseResult, File logDir) throws IOException {
+		aStream.write(anIndent + "<testcase\n");
+		aStream.write(anIndent + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		aStream.write(anIndent + "    xsi:noNamespaceSchemaLocation=\"TestResult_Case.xsd\"\n");
+		aStream.write(anIndent + "    xsdMain='0'\n");
+		aStream.write(anIndent + "    xsdSub='2'\n");
+		aStream.write(anIndent + "    xsdPatch='0'\n");
+		aStream.write(anIndent + "    id='" + aTestCaseResult.getId() + "'\n");
+		aStream.write(anIndent + "    sequence='" + aTestCaseResult.getSequenceNr() + "'\n");
+		aStream.write(anIndent + ">\n");
+		
+		printDescription(aStream, aTestCaseResult.getDescription(), "");
+		printRequirements(aStream, aTestCaseResult.getRequirements(), "");
+
+		aStream.write(anIndent + "  <prepare>\n");
+		printStepResults(aStream, aTestCaseResult.getPrepareResults(), logDir);
+		aStream.write(anIndent + "  </prepare>\n");
+
+		aStream.write(anIndent + "  <execute>\n");
+		printStepResults(aStream, aTestCaseResult.getExecutionResults(), logDir);
+		aStream.write(anIndent + "  </execute>\n");
+
+		aStream.write(anIndent + "  <restore>\n");
+		printStepResults(aStream, aTestCaseResult.getRestoreResults(), logDir);
+		aStream.write(anIndent + "  </restore>\n");
+
+		aStream.write(anIndent + "  <result>" + aTestCaseResult.getResult().toString() + "</result>\n");
+
+		XmlWriterUtils.printXmlLogFiles(aTestCaseResult.getLogs(), aStream, logDir.getAbsolutePath(), "  ");
+		XmlWriterUtils.printXmlComment(aTestCaseResult, aStream, "  ");
+
+		aStream.write(anIndent + "</testcase>\n");
 	}
 
 	/**
@@ -176,7 +187,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	 * @throws IOException
 	 */
 	private void printStepResults(	OutputStreamWriter aStream,
-									Hashtable<Integer, TestStepResult> aStepResults,
+									Hashtable<Integer, TestStepResultBase> aStepResults,
 									File aLogDir ) throws IOException
 	{
 		for (int key = 0; key < aStepResults.size(); key++)
