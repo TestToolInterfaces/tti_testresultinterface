@@ -31,6 +31,9 @@ public class TestCaseResultReader
 	{
 		Trace.println(Trace.SUITE, "readTcResultFile( " + aTestCaseResultLink.getId() + " )", true);
 
+		if ( aTestCaseResultLink.getLink() == null ) {
+			throw new Error( "Link is not set: " + aTestCaseResultLink.getId() );
+		}
 		return readTcResultFile( aTestCaseResultLink.getLink() );
 	}
 

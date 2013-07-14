@@ -313,12 +313,14 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		aStream.write(" sequence='" + tcResultLink.getSequenceNr() + "'");
 		aStream.write(">\n");
 
-		aStream.write(anIndent + "    <link>");
-		String tcLink = tcResultLink.getLink().getAbsolutePath();
-		String relativeTcLink = XmlWriterUtils.makeFileRelative(tcLink, aLogDir.getAbsolutePath());
-		aStream.write(relativeTcLink);
-		aStream.write("</link>\n");
-		
+		if ( tcResultLink.getLink() != null ) {
+			aStream.write(anIndent + "    <link>");
+			String tcLink = tcResultLink.getLink().getAbsolutePath();
+			String relativeTcLink = XmlWriterUtils.makeFileRelative(tcLink, aLogDir.getAbsolutePath());
+			aStream.write(relativeTcLink);
+			aStream.write("</link>\n");
+		}
+
 		aStream.write(anIndent + "    <verdict>");
 		aStream.write(tcResultLink.getResult().toString());
 		aStream.write("</verdict>\n");
