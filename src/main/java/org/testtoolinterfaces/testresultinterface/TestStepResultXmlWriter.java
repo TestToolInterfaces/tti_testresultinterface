@@ -185,26 +185,33 @@ public class TestStepResultXmlWriter
         	aStream.write( indent + "  <parameter id='" + param.getName() + "' " );
     		if (ParameterImpl.class.isInstance(param))
     		{
-    			aStream.write( "type='value' sequence='" + param.getIndex() + "'>"
-            	               + ((ParameterImpl) param).getValue().toString() );
+    			aStream.write( "type='value' sequence='" + param.getIndex() + "'>\n" );
+            	aStream.write( indent + "    <value>"    			
+            	               + ((ParameterImpl) param).getValue().toString()
+            	               + "</value>\n" );
    			
     		}
     		else if (ParameterVariable.class.isInstance(param))
     		{
-            	aStream.write( "type='variable' sequence='" + param.getIndex() + "'>"
-            	               + ((ParameterVariable) param).getVariableName() );
+            	aStream.write( "type='variable' sequence='" + param.getIndex() + "'>\n" );
+                aStream.write( indent + "    <value>"    			
+            	               + ((ParameterVariable) param).getVariableName()
+             	               + "</value>\n" );
     		}
     		else if (ParameterHash.class.isInstance(param))
     		{
     			// TODO print the sub-parameters
-            	aStream.write( "type='hash' sequence='" + param.getIndex() + "'>"
-            	               + ((ParameterHash) param).size() + " sub-parameters" );
+            	aStream.write( "type='hash' sequence='" + param.getIndex() + "'>\n" );
+            	aStream.write( indent + "    <value>"
+     	               + ((ParameterHash) param).size() + " sub-parameters"
+      	               + "</value>\n" );
     		}
     		else
     		{
-            	aStream.write( "type='unknown' sequence='" + param.getIndex() + "'>" );
+            	aStream.write( "type='unknown' sequence='" + param.getIndex() + "'>\n" );
+            	aStream.write( indent + "    <value/>\n" );
     		}
-        	aStream.write("</parameter>\n" );
+        	aStream.write( indent + "  </parameter>\n" );
     	}
 	}
 
