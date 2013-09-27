@@ -149,9 +149,6 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		aStream.write("<testrun\n");
 		aStream.write("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 		aStream.write("    xsi:noNamespaceSchemaLocation=\"TestResult_Run.xsd\"\n");
-		aStream.write("    xsdMain='0'\n");
-		aStream.write("    xsdSub='2'\n");
-		aStream.write("    xsdPatch='0'\n");
 		aStream.write("    name='" + aRunResult.getDisplayName() + "'\n");
 		aStream.write("    suite='" + aRunResult.getTestSuite() + "'\n");
 		aStream.write("    environment='" + myTestEnvironment + "'\n");
