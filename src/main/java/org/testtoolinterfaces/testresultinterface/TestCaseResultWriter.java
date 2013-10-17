@@ -3,7 +3,7 @@ package org.testtoolinterfaces.testresultinterface;
 import java.io.File;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestCaseResultObserver;
+import org.testtoolinterfaces.testresult.observer.TestCaseResultObserver;
 
 public interface TestCaseResultWriter extends TestCaseResultObserver
 {

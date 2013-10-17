@@ -3,17 +3,18 @@
  */
 package org.testtoolinterfaces.testresultinterface;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.OutputStreamWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestRunResult;
-
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.Warning;
 
 /**
@@ -22,7 +23,9 @@ import org.testtoolinterfaces.utils.Warning;
  */
 public class TestRunResultXmlWriter implements TestRunResultWriter
 {
-	private File myXslDir;
+    private static final Logger LOG = LoggerFactory.getLogger(TestRunResultXmlWriter.class);
+
+    private File myXslDir;
 	private String myTestEnvironment = "Unknown";
 	private String myTestPhase = "Unknown";
 	private File myBaseLogDir;
@@ -38,9 +41,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	                               String anEnvironment,
 	                               String aTestPhase )
 	{
-	    Trace.println(Trace.CONSTRUCTOR, "TestRunResultXmlWriter( aConfiguration, "
-						+ anEnvironment + ", "
-						+ aTestPhase + " )", true);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}, {}", aConfiguration, anEnvironment, aTestPhase);
 		myXslDir = aConfiguration.getRunXslDir();
 		if (myXslDir == null)
 		{
@@ -61,16 +62,14 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	/* (non-Javadoc)
 	 * @see org.testtoolinterfaces.testresultinterface.TestRunResultWriter#write(org.testtoolinterfaces.testresultinterface.TestRunResult)
 	 */
-	public void write( TestRunResult aRunResult, File aFileName )
-	{
-	    Trace.println(Trace.UTIL);
-		myResultFile = aFileName;
+	public void write( TestRunResult aRunResult, File aFile ) {
+		LOG.trace(Mark.UTIL, "{}, {}", aRunResult, aFile);
+		myResultFile = aFile;
 		
-		if ( aRunResult == null )
-		{
+		if ( aRunResult == null ) {
 			return;
 		}
-		writeToFile(aRunResult, aFileName);
+		writeToFile(aRunResult, aFile);
 		
 		aRunResult.register(this);
 	}
@@ -80,7 +79,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	 */
 	public void notify( TestRunResult aRunResult )
 	{
-	    Trace.println(Trace.UTIL, "notify( " + aRunResult.getDisplayName() + " )", true);
+		LOG.trace(Mark.UTIL, "{}", aRunResult);
 
 	    if (myResultFile == null)
 		{
@@ -119,7 +118,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 		catch (IOException e)
 		{
 			Warning.println("Saving Test Run Result XML failed: " + e.getMessage());
-			Trace.print(Trace.SUITE, e);
+			LOG.trace(Mark.SUITE, "", e);
 		}
 	}
 
@@ -212,7 +211,7 @@ public class TestRunResultXmlWriter implements TestRunResultWriter
 	 */
 	public void printXmlLogFiles(Hashtable<String, String> aLogs, OutputStreamWriter aStream) throws IOException
 	{
-	    Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "{}, {}", aLogs, aStream);
 		
       	if (!aLogs.isEmpty())
       	{

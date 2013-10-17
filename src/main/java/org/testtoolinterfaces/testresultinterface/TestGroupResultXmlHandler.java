@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testresult.impl.TestGroupResultImpl;
 import org.testtoolinterfaces.testsuite.TestGroup;
-import org.testtoolinterfaces.testsuite.TestGroupImpl;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
+import org.testtoolinterfaces.testsuite.impl.TestGroupImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
@@ -51,7 +53,9 @@ import org.xml.sax.helpers.LocatorImpl;
 
 public class TestGroupResultXmlHandler extends XmlHandler
 {
-	public static final String START_ELEMENT = "testgroup";
+    private static final Logger LOG = LoggerFactory.getLogger(TestGroupResultXmlHandler.class);
+
+    public static final String START_ELEMENT = "testgroup";
 	private static final String ATTRIBUTE_ID = "id";
 	private static final String ATTRIBUTE_STARTDATE = "startdate";
 	private static final String ATTRIBUTE_STARTTIME = "starttime";
@@ -95,7 +99,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	public TestGroupResultXmlHandler( XMLReader anXmlReader, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, START_ELEMENT);
-		Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}", anXmlReader, anInterfaceList);
 
 		this.reset();
 
@@ -126,13 +130,12 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
-		Trace.print(Trace.SUITE, "processElementAttributes( " 
-	            + aQualifiedName, true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
     	if (aQualifiedName.equalsIgnoreCase(TestGroupResultXmlHandler.START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+				LOG.trace(Mark.SUITE, "{} = {}", att.getQName(i), att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ATTRIBUTE_ID))
 		    	{
 		        	myTestGroupId = att.getValue(i);
@@ -140,7 +143,6 @@ public class TestGroupResultXmlHandler extends XmlHandler
 // TODO startdate, starttime, etc.
 		    }
     	}
-		Trace.println( Trace.SUITE, " )" );
     }
     
     /**
@@ -148,7 +150,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
      */
     public TestGroupResult getTestGroupResult() throws SAXParseException
     {
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 
 		if ( myTestGroupId.isEmpty() )
 		{
@@ -200,13 +202,13 @@ public class TestGroupResultXmlHandler extends XmlHandler
 
 	public int getSequence()
 	{
-		Trace.println(Trace.GETTER, "getSequence() -> " + myCurrentSequence, true);
+		LOG.trace(Mark.GETTER, "");
 		return myCurrentSequence;
 	}
 
 	public void reset()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 
 		myTestGroupId = "";
 		myCurrentSequence = 0;
@@ -251,7 +253,7 @@ public class TestGroupResultXmlHandler extends XmlHandler
 	@Override
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
     	if (aQualifiedName.equalsIgnoreCase(ELEMENT_DESCRIPTION))
     	{
     		myDescription = myDescriptionXmlHandler.getValue();

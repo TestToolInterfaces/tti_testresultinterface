@@ -11,7 +11,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.testtoolinterfaces.testresult.TestResult.VERDICT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testtoolinterfaces.testresult.SingleResult.VERDICT;
 import org.testtoolinterfaces.testresult.TestStepCommandResult;
 import org.testtoolinterfaces.testresult.TestStepIterationResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
@@ -23,7 +25,7 @@ import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.ParameterHash;
 import org.testtoolinterfaces.testsuite.ParameterImpl;
 import org.testtoolinterfaces.testsuite.ParameterVariable;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 
 /**
  * @author arjan.kranenburg
@@ -31,7 +33,9 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class TestStepResultXmlWriter
 {
-	private int myIndentLevel = 0;
+    private static final Logger LOG = LoggerFactory.getLogger(TestStepResultXmlWriter.class);
+
+    private int myIndentLevel = 0;
 	private TestStepResultXmlWriter mySubTestStepResultXmlWriter;
 
 	/**
@@ -47,7 +51,7 @@ public class TestStepResultXmlWriter
 	 */
 	public TestStepResultXmlWriter( int anIndentLevel )
 	{
-		Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}", anIndentLevel);
 		myIndentLevel = anIndentLevel;
 	}
 
@@ -61,10 +65,24 @@ public class TestStepResultXmlWriter
 	                      OutputStreamWriter aStream,
 	                      File aLogDir) throws IOException
 	{
-		Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "{}, {}, {}", aResult, aStream, aLogDir);
 		String indent = repeat( ' ', myIndentLevel );
 		printOpeningTag(aStream, indent, aResult);
-    	printDescription(aStream, indent, aResult.getDescription());
+    	printStepContent(aResult, aStream, aLogDir, indent);
+		aStream.write( indent + "</teststep>\n");
+	}
+
+	/**
+	 * @param aResult
+	 * @param aStream
+	 * @param aLogDir
+	 * @param indent
+	 * @throws IOException
+	 */
+	private void printStepContent(TestStepResultBase aResult,
+			OutputStreamWriter aStream, File aLogDir, String indent)
+			throws IOException {
+		printDescription(aStream, indent, aResult.getDescription());
     	printDisplayname(aStream, indent, aResult.getDisplayName());
 
     	if ( aResult instanceof TestStepResult ) {
@@ -89,7 +107,6 @@ public class TestStepResultXmlWriter
     	printComment(aStream, indent, aResult.getComment());
 
     	XmlWriterUtils.printXmlLogFiles(aResult.getLogs(), aStream, aLogDir.getAbsolutePath(), indent );
-		aStream.write( indent + "</teststep>\n");
 	}
 
 	private void printIteration(OutputStreamWriter aStream, String indent,
@@ -130,11 +147,14 @@ public class TestStepResultXmlWriter
 		aStream.write( indent + "  </foreach>\n");
 	}
 
-	private void printSelection(OutputStreamWriter aStream, String indent,
+	private void printSelection(OutputStreamWriter aStream, String parentIndent,
 			TestStepSelectionResult aResult, File aLogDir) throws IOException {
-    	aStream.write( indent + "  <ifstep>\n");
-		this.getSubTestStepResultWriter().printXml(aResult.getIfStepResult(), aStream, aLogDir);
-		aStream.write( indent + "  </ifstep>\n");
+		String indent = parentIndent + "  ";
+    	aStream.write( indent + "<ifstep>\n");
+//		this.getSubTestStepResultWriter().printXml(aResult.getIfStepResult(), aStream, aLogDir);
+    	printStepContent(aResult.getIfStepResult(), aStream, aLogDir, indent);
+
+		aStream.write( indent + "</ifstep>\n");
 	}
 
 	/**
@@ -267,7 +287,7 @@ public class TestStepResultXmlWriter
 	    	                       OutputStreamWriter aStream,
 	    	                       File aLogDir ) throws IOException
 	{
-		Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "{}, {}, {}", aResult, aStream, aLogDir);
 
 		ArrayList<TestStepResultBase> subStepResults = aResult.getSubSteps();
 		String indent = repeat( ' ', myIndentLevel + 2 );

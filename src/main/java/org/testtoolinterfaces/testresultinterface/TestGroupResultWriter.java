@@ -3,7 +3,7 @@ package org.testtoolinterfaces.testresultinterface;
 import java.io.File;
 
 import org.testtoolinterfaces.testresult.TestGroupResult;
-import org.testtoolinterfaces.testresult.TestGroupResultObserver;
+import org.testtoolinterfaces.testresult.observer.TestGroupResultObserver;
 
 public interface TestGroupResultWriter extends TestGroupResultObserver
 {

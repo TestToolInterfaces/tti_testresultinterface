@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testtoolinterfaces.testresult.SingleResult.VERDICT;
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestResult;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testresult.impl.TestCaseResultImpl;
 import org.testtoolinterfaces.testsuite.TestCase;
-import org.testtoolinterfaces.testsuite.TestCaseImpl;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
+import org.testtoolinterfaces.testsuite.impl.TestCaseImpl;
+import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
+import org.testtoolinterfaces.utils.Mark;
+import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.LocatorImpl;
-
-import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
-import org.testtoolinterfaces.utils.XmlHandler;
 
 /**
  * @author Arjan Kranenburg 
@@ -45,7 +46,9 @@ import org.testtoolinterfaces.utils.XmlHandler;
 
 public class TestCaseResultXmlHandler extends XmlHandler
 {
-	public static final String START_ELEMENT = "testcase";
+    private static final Logger LOG = LoggerFactory.getLogger(TestCaseResultXmlHandler.class);
+
+    public static final String START_ELEMENT = "testcase";
 	public static final String ELEMENT_ID = "id";
 	public static final String ELEMENT_SEQUENCE = "sequence";
 	
@@ -53,7 +56,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	private int mySequence;
 	private String myDescription;
 	private ArrayList<String> myRequirements;
-	private TestResult.VERDICT myResult;
+	private VERDICT myResult;
 	private String myComment;
 	private Hashtable<String, String> myLogFiles;
 
@@ -88,7 +91,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	public TestCaseResultXmlHandler( XMLReader anXmlReader, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, START_ELEMENT);
-		Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}", anXmlReader, anInterfaceList);
 
 		this.reset();
 
@@ -125,13 +128,12 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
-		Trace.print(Trace.SUITE, "processElementAttributes( " 
-	            + aQualifiedName, true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
     	if (aQualifiedName.equalsIgnoreCase(TestCaseResultXmlHandler.START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+				LOG.trace(Mark.SUITE, "{} = {}", att.getQName(i), att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ELEMENT_ID))
 		    	{
 		        	myTestCaseId = att.getValue(i);
@@ -142,7 +144,6 @@ public class TestCaseResultXmlHandler extends XmlHandler
 		    	}
 		    }
     	}
-		Trace.println( Trace.SUITE, " )" );
     }
     
     /**
@@ -150,7 +151,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
      */
     public TestCaseResult getTestCaseResult() throws SAXParseException
     {
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 
 		if ( myTestCaseId.isEmpty() )
 		{
@@ -198,19 +199,19 @@ public class TestCaseResultXmlHandler extends XmlHandler
 
 	public int getSequence()
 	{
-		Trace.println(Trace.GETTER, "getSequence() -> " + mySequence, true);
+		LOG.trace(Mark.GETTER, "");
 		return mySequence;
 	}
 
 	public void reset()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 
 		myTestCaseId = "";
 		mySequence = 0;
 		myDescription = "";
 		myRequirements = new ArrayList<String>();
-		myResult = TestResult.UNKNOWN;
+		myResult = VERDICT.UNKNOWN;
 		myComment = "";
 
 		myLogFiles = new Hashtable<String, String>();
@@ -249,7 +250,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
 	@Override
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, aChildXmlHandler);
     	if (aQualifiedName.equalsIgnoreCase(DESCRIPTION_ELEMENT))
     	{
     		myDescription = myDescriptionXmlHandler.getValue();
@@ -277,7 +278,7 @@ public class TestCaseResultXmlHandler extends XmlHandler
     	}
     	else if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
     	{
-     		myResult = TestResult.VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
+     		myResult = VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
      		myResultXmlHandler.reset();
     	}
     	else if (aQualifiedName.equalsIgnoreCase(COMMENT_ELEMENT))

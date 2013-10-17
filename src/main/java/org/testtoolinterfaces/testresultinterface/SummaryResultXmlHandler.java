@@ -1,8 +1,10 @@
 package org.testtoolinterfaces.testresultinterface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
@@ -22,7 +24,9 @@ import org.xml.sax.XMLReader;
 
 public class SummaryResultXmlHandler extends XmlHandler
 {
-	public static final String ELEMENT_START = "summary";
+    private static final Logger LOG = LoggerFactory.getLogger(SummaryResultXmlHandler.class);
+
+    public static final String ELEMENT_START = "summary";
 
 	private static final String ELEMENT_TOTAL = "totaltestcases";
 	private static final String ELEMENT_PASSED = "totalpassed";
@@ -68,7 +72,8 @@ public class SummaryResultXmlHandler extends XmlHandler
 	public void handleReturnFromChildElement( String aQualifiedName,
 	                                          XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, aChildXmlHandler);
+
 		if ( ! aChildXmlHandler.getClass().equals(GenericTagAndStringXmlHandler.class) )
 		{
 			throw new Error( "ChildXmlHandler (" + aChildXmlHandler.getClass().toString() + ") must be of type GenericTagAndStringXmlHandler" );
@@ -107,7 +112,7 @@ public class SummaryResultXmlHandler extends XmlHandler
 
 	public ResultSummary getSummary()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 
 		// We only use 4 of the 5.
 		// We derive 'unknown' to make the 5 match, but only if the resulting unknown is positive
@@ -122,7 +127,7 @@ public class SummaryResultXmlHandler extends XmlHandler
 
 	public void reset()
 	{
-		Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "");
 		myTotal = 0;
 		myPassed = 0;
 		myFailed = 0;

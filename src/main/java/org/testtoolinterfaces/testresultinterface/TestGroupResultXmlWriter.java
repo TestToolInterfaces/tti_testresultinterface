@@ -7,24 +7,26 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestCaseResultLink;
-import org.testtoolinterfaces.testresult.TestExecItemIterationResult;
 import org.testtoolinterfaces.testresult.TestExecItemResult;
 import org.testtoolinterfaces.testresult.TestExecItemResultLink;
-import org.testtoolinterfaces.testresult.TestExecItemSelectionResult;
+import org.testtoolinterfaces.testresult.TestGroupEntryIterationResult;
 import org.testtoolinterfaces.testresult.TestGroupEntryResult;
+import org.testtoolinterfaces.testresult.TestGroupEntryResultList;
+import org.testtoolinterfaces.testresult.TestGroupEntrySelectionResult;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testresult.TestStepResultBase;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.Warning;
 
 /**
@@ -33,7 +35,9 @@ import org.testtoolinterfaces.utils.Warning;
  */
 public class TestGroupResultXmlWriter implements TestGroupResultWriter
 {
-	private File myXslDir;
+    private static final Logger LOG = LoggerFactory.getLogger(TestGroupResultXmlWriter.class);
+
+    private File myXslDir;
 	private Hashtable<String, File> myResultFiles;
 	
 	private TestCaseResultXmlWriter myTcResultWriter;
@@ -41,7 +45,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	
 	public TestGroupResultXmlWriter( Configuration aConfiguration )
 	{
-		Trace.println(Trace.CONSTRUCTOR, "TestGroupResultXmlWriter( aConfiguration )", true);
+		LOG.trace(Mark.CONSTRUCTOR, "{}", aConfiguration);
 		myXslDir = aConfiguration.getGroupXslDir();
 		if (myXslDir == null)
 		{
@@ -63,7 +67,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	 */
 	public void write( TestGroupResult aTestGroupResult, File aResultFile )
 	{
-	    Trace.println(Trace.UTIL, "write( " + aResultFile.getPath() + " )", true);
+		LOG.trace(Mark.UTIL, "{}, {}", aTestGroupResult, aResultFile);
 		if ( aTestGroupResult == null )
 		{
 			return;
@@ -77,7 +81,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 
 	public void notify( TestGroupResult aTestGroupResult )
 	{
-	    Trace.println(Trace.UTIL, "notify( " + aTestGroupResult.getId() + " )", true);
+		LOG.trace(Mark.UTIL, "{}", aTestGroupResult);
 
 	    File resultFile = myResultFiles.get( aTestGroupResult.getId() );
 	    if (resultFile == null)
@@ -117,7 +121,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 		catch (IOException exception)
 		{
 			Warning.println("Saving Test Group Result XML failed: " + exception.getMessage());
-			Trace.print(Trace.SUITE, exception);
+			LOG.trace(Mark.SUITE, "", exception);
 		}
 	}
 
@@ -131,14 +135,15 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	public void printXml(TestGroupResult aTestGroupResult, OutputStreamWriter aStream,
 			String anIndent, File aLogDir) throws IOException
 	{
-	    Trace.println(Trace.UTIL, "printXml( " + aTestGroupResult.getId() + " )", true);
+		LOG.trace(Mark.UTIL, "{}, {}, {}, {}",
+				aTestGroupResult, aStream, anIndent, aLogDir);
 
 	    printOpeningTag(aStream, anIndent, aTestGroupResult);
 	    
 	    String indent = anIndent + "  ";
 		printPrepareSteps(aStream, indent, aTestGroupResult, aLogDir);
 
-		Collection<TestGroupEntryResult> tgEntryResults
+		TestGroupEntryResultList tgEntryResults
 			= aTestGroupResult.getTestGroupEntryResults();
 
 		printTgEntryResults(aStream, indent, tgEntryResults, aLogDir);
@@ -160,7 +165,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	 * @throws IOException
 	 */
 	public void printTgEntryResults(OutputStreamWriter aStream, String indent,
-			Collection<TestGroupEntryResult> tgEntryResultList, File aLogDir)
+			TestGroupEntryResultList tgEntryResultList, File aLogDir)
 					throws IOException {
 		Iterator<TestGroupEntryResult> tgEntryResultListItr	= tgEntryResultList.iterator();
 		while ( tgEntryResultListItr.hasNext() ) {
@@ -179,9 +184,9 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 			    }
 		    }
 		    else if ( tgEntryResult instanceof TestExecItemResult ) {
-		    	if ( tgEntryResult instanceof TestExecItemSelectionResult ) {
+		    	if ( tgEntryResult instanceof TestGroupEntrySelectionResult ) {
 					printSelection(aStream, indent,
-							(TestExecItemSelectionResult) tgEntryResult, aLogDir);
+							(TestGroupEntrySelectionResult) tgEntryResult, aLogDir);
 		    	}
 		    	else if ( tgEntryResult instanceof TestGroupResult ) {
 		    		this.printXml( (TestGroupResult) tgEntryResult,
@@ -195,9 +200,9 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 			    	System.out.println( "ERROR: Don't know how to save entry " + tgEntryResult.getId() );
 			    }
 		    }
-		    else if ( tgEntryResult instanceof TestExecItemIterationResult ) {
+		    else if ( tgEntryResult instanceof TestGroupEntryIterationResult ) {
 		    	this.printEntryIteration( aStream, indent,
-		    			(TestExecItemIterationResult) tgEntryResult,aLogDir);
+		    			(TestGroupEntryIterationResult) tgEntryResult,aLogDir);
 		    }
 		    else {
 		    	System.out.println( "ERROR: Don't know how to save " + tgEntryResult.getId() );
@@ -246,7 +251,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	}
 
 	private void printSelection(OutputStreamWriter aStream,
-			String anIndent, TestExecItemSelectionResult teiSelectionResult, File aLogDir)
+			String anIndent, TestGroupEntrySelectionResult teiSelectionResult, File aLogDir)
 					throws IOException {
 
 		aStream.write(anIndent + "<selection");
@@ -266,18 +271,18 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 	}
 
 	private void printEntryIteration( OutputStreamWriter aStream, String indent,
-			TestExecItemIterationResult aResult, File aLogDir) throws IOException {
+			TestGroupEntryIterationResult aResult, File aLogDir) throws IOException {
 		aStream.write( indent + "  <foreach>\n");
 		aStream.write( indent + "    <item>" + aResult.getItemName() + "</item>\n");
 		aStream.write( indent + "    <list>" + aResult.getListName() + "</list>\n");
 
-		Hashtable<Integer, List<TestGroupEntryResult>> tgEntryResultListTable = aResult.getTestResultSequenceTable();
+		Hashtable<Integer,List<TestGroupEntryResult>> tgEntryResultListTable = aResult.getTestResultSequenceTable();
 		Hashtable<Integer, Object> testValueTable = aResult.getIterationValues();
 		Hashtable<Integer, TestStepResult> untilTestStepTable = aResult.getUntilResults();
 
 		int i = 0;
 		while ( i < aResult.getSize() ) {
-			List<TestGroupEntryResult> tgEntryResultList = tgEntryResultListTable.get(i);
+			TestGroupEntryResultList tgEntryResultList = (TestGroupEntryResultList) tgEntryResultListTable.get(i);
 			Object testValue = testValueTable.get(i);
 			TestStepResult untilTestStepResult = untilTestStepTable.get(i);
 
@@ -391,7 +396,7 @@ public class TestGroupResultXmlWriter implements TestGroupResultWriter
 								ResultSummary aSummary,
 								String anIndent) throws IOException
 	{
-	    Trace.println(Trace.UTIL, "printSummary( aStream, aSummary, " + anIndent + " )", true);
+		LOG.trace(Mark.UTIL, "{}, {}", aStream, aSummary, anIndent);
 		aStream.write(anIndent + "<summary>\n");
 		aStream.write(anIndent + "  <totaltestcases>");
 		aStream.write( ((Integer) aSummary.getNrOfTCs()).toString() );

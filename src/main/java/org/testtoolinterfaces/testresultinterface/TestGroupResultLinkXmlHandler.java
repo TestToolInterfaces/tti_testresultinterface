@@ -2,13 +2,15 @@ package org.testtoolinterfaces.testresultinterface;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.ResultSummary;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
 import org.testtoolinterfaces.testresult.impl.TestGroupResultLinkImpl;
 import org.testtoolinterfaces.testsuite.TestGroupLink;
-import org.testtoolinterfaces.testsuite.TestLinkImpl;
+import org.testtoolinterfaces.testsuite.impl.TestLinkImpl;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
@@ -29,7 +31,9 @@ import org.xml.sax.XMLReader;
 
 public class TestGroupResultLinkXmlHandler extends XmlHandler
 {
-	public static final String ELEMENT_START = "testgrouplink";
+    private static final Logger LOG = LoggerFactory.getLogger(TestGroupResultLinkXmlHandler.class);
+
+    public static final String ELEMENT_START = "testgrouplink";
 
 	private static final String ATTRIBUTE_ID = "id";
 	private static final String ATTRIBUTE_TYPE = "type";
@@ -64,7 +68,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	public void handleReturnFromChildElement(String aQualifiedName,
 												XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, aChildXmlHandler);
     	if (aQualifiedName.equalsIgnoreCase(ELEMENT_LINK))
     	{
     		myTgResultLink = new File( myTestGroupLinkXmlHandler.getValue() );
@@ -80,13 +84,13 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 	@Override
 	public void processElementAttributes(String aQualifiedName, Attributes att)
 	{
-		Trace.print(Trace.SUITE, "processElementAttributes( " + aQualifiedName + ", attributes )", true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
 
 		if (aQualifiedName.equalsIgnoreCase(TestGroupResultXmlHandler.START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+				LOG.trace(Mark.SUITE, "{} = {}", att.getQName(i), att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ATTRIBUTE_ID))
 		    	{
 		    		myTestGroupId = att.getValue(i);
@@ -101,13 +105,11 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 		    	}
 		    }
     	}
-
-    	Trace.println( Trace.SUITE, " )" );
 	}
 
 	public TestGroupResultLink getTestGroupResultLink()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 		TestGroupLink tgLink = new TestGroupLink( myTestGroupId,
 		                                          mySequence++,
 		                                          new TestLinkImpl("unknown", myType) );
@@ -117,7 +119,7 @@ public class TestGroupResultLinkXmlHandler extends XmlHandler
 
 	public void reset()
 	{
-		Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "");
 		myTestGroupId = "";
 		myType = "";
 //		mySequence = 0;

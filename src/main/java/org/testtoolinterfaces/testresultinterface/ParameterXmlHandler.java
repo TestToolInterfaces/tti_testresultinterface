@@ -1,5 +1,7 @@
 package org.testtoolinterfaces.testresultinterface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.ParameterResult;
 import org.testtoolinterfaces.testsuite.Parameter;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
@@ -7,8 +9,7 @@ import org.testtoolinterfaces.testsuite.ParameterHash;
 import org.testtoolinterfaces.testsuite.ParameterImpl;
 import org.testtoolinterfaces.testsuite.ParameterVariable;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.TTIException;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
@@ -24,7 +25,9 @@ import org.xml.sax.XMLReader;
 
 public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 {
-	public static final String ELEMENT_START = "parameter";
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterXmlHandler.class);
+
+    public static final String ELEMENT_START = "parameter";
 
 	private static final String ATTRIBUTE_ID = "id";
 	private static final String ATTRIBUTE_TYPE = "type";
@@ -51,13 +54,13 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 	@Override
 	public void processElementAttributes(String aQualifiedName, Attributes att)
 	{
-		Trace.print(Trace.SUITE, "processElementAttributes( " + aQualifiedName + ", attributes )", true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
 
 		if (aQualifiedName.equalsIgnoreCase(TestGroupResultXmlHandler.START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
 		    {
-	    		Trace.print( Trace.SUITE, ", " + att.getQName(i) + "=" + att.getValue(i) );
+				LOG.trace(Mark.SUITE, "{} = {}", att.getQName(i), att.getValue(i) );
 		    	if (att.getQName(i).equalsIgnoreCase(ATTRIBUTE_ID))
 		    	{
 		    		myParameterId = att.getValue(i);
@@ -72,13 +75,11 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 		    	}
 		    }
     	}
-
-    	Trace.println( Trace.SUITE, " )" );
 	}
 
 	public ParameterResult getParameterResult()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 		Parameter param;
 		if ( myType.equalsIgnoreCase("value") )
 		{
@@ -105,7 +106,7 @@ public class ParameterXmlHandler extends GenericTagAndStringXmlHandler
 
 	public void reset()
 	{
-		Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "");
 		myParameterId = "";
 		myType = "";
 //		mySequence = 0;

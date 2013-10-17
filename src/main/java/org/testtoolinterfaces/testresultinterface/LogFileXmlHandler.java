@@ -1,10 +1,11 @@
 package org.testtoolinterfaces.testresultinterface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
+import org.testtoolinterfaces.utils.Mark;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
-
-import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
 
 /**
  * @author Arjan Kranenburg 
@@ -14,7 +15,9 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class LogFileXmlHandler extends GenericTagAndStringXmlHandler
 {
-	public static final String START_ELEMENT = "logfile";
+    private static final Logger LOG = LoggerFactory.getLogger(LogFileXmlHandler.class);
+
+    public static final String START_ELEMENT = "logfile";
 	public static final String PARAM_TYPE = "type";
 	
     private String myType = "";
@@ -22,13 +25,12 @@ public class LogFileXmlHandler extends GenericTagAndStringXmlHandler
 	public LogFileXmlHandler( XMLReader anXmlReader )
 	{
 		super(anXmlReader, START_ELEMENT);
-		Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}", anXmlReader);
 	}
 
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
-		Trace.println(Trace.SUITE, "processElementAttributes( "
-				+ aQualifiedName + " )", true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
     	if (aQualifiedName.equalsIgnoreCase(START_ELEMENT))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
@@ -36,7 +38,7 @@ public class LogFileXmlHandler extends GenericTagAndStringXmlHandler
 		    	if (att.getQName(i).equalsIgnoreCase(PARAM_TYPE))
 		    	{
 		    		myType = att.getValue(i);
-		    		Trace.println( Trace.ALL, "        myType -> " + myType );
+		    		LOG.trace(Mark.SUITE, "myType -> {}", myType );
     	    	}
 		    }
     	}
@@ -44,13 +46,13 @@ public class LogFileXmlHandler extends GenericTagAndStringXmlHandler
 
 	public String getType()
 	{
-		Trace.println(Trace.GETTER);
+		LOG.trace(Mark.GETTER, "");
 		return myType;
 	}
 
 	public void reset()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
     	super.reset();
     	myType = "";
 	}

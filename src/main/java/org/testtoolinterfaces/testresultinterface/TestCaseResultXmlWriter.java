@@ -10,9 +10,11 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestCaseResult;
 import org.testtoolinterfaces.testresult.TestStepResultBase;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.Warning;
 
 /**
@@ -21,7 +23,9 @@ import org.testtoolinterfaces.utils.Warning;
  */
 public class TestCaseResultXmlWriter implements TestCaseResultWriter
 {
-	private File myXslDir;
+    private static final Logger LOG = LoggerFactory.getLogger(TestCaseResultXmlWriter.class);
+
+    private File myXslDir;
 	private File myResultFile;
 	
 	TestStepResultXmlWriter myTsResultWriter;
@@ -31,7 +35,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	 */
 	public TestCaseResultXmlWriter(Configuration aConfiguration)
 	{
-		Trace.println(Trace.CONSTRUCTOR, "TestCaseResultXmlWriter( aConfiguration )", true);
+		LOG.trace(Mark.CONSTRUCTOR, "{}", aConfiguration);
 		myXslDir = aConfiguration.getCaseXslDir();
 		if (myXslDir == null)
 		{
@@ -51,9 +55,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	 */
 	public void write( TestCaseResult aTestCaseResult, File aResultFile )
 	{
-	    Trace.println( Trace.UTIL,
-	                   "write( " + aResultFile.getPath() + " )",
-	                   true );
+		LOG.trace(Mark.UTIL, "{}, {}", aTestCaseResult, aResultFile);
 		if ( aTestCaseResult == null )
 		{
 			return;
@@ -68,9 +70,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 
 	public void notify( TestCaseResult aTestCaseResult )
 	{
-	    Trace.println( Trace.UTIL,
-	                   "notify( " + aTestCaseResult.getId() + " )",
-	                   true );
+		LOG.trace(Mark.UTIL, "{}", aTestCaseResult);
 		writeToFile(aTestCaseResult, myResultFile);
 	}
 
@@ -80,10 +80,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 	 */
 	private void writeToFile(TestCaseResult aTestCaseResult, File aResultFile)
 	{
-	    Trace.println( Trace.UTIL,
-	                   "writeToFile( " + aTestCaseResult.getId() + ", "
-	                   				   + aResultFile.getPath() + " )",
-	                   true );
+		LOG.trace(Mark.UTIL, "{}, {}", aTestCaseResult, aResultFile);
 
 	    File logDir = aResultFile.getParentFile();
         if (!logDir.exists())
@@ -106,7 +103,7 @@ public class TestCaseResultXmlWriter implements TestCaseResultWriter
 		catch (IOException exception)
 		{
 			Warning.println("Saving Test Case Result XML failed: " + exception.getMessage());
-			Trace.print(Trace.SUITE, exception);
+			LOG.trace(Mark.SUITE, "", exception);
 		}
 	}
 

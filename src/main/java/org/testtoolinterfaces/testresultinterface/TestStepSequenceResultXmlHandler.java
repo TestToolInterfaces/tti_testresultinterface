@@ -2,15 +2,19 @@ package org.testtoolinterfaces.testresultinterface;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
 public class TestStepSequenceResultXmlHandler extends XmlHandler
 {
+    private static final Logger LOG = LoggerFactory.getLogger(TestStepSequenceResultXmlHandler.class);
+
     private ArrayList<TestStepResult> mySteps;
 
 	private ActionTypeResultXmlHandler myTestStepXmlHandler;
@@ -22,7 +26,7 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 											TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, aTag);
-		Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}, {}", anXmlReader, aTag, anInterfaceList);
 
     	this.reset();
 
@@ -60,7 +64,7 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 	public void handleReturnFromChildElement(String aQualifiedName,
 												XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, aChildXmlHandler);
     	if (aQualifiedName.equalsIgnoreCase("teststep"))
     	{
     		mySteps.add(myTestStepXmlHandler.getActionStep());
@@ -97,13 +101,13 @@ public class TestStepSequenceResultXmlHandler extends XmlHandler
 	 */
 	public ArrayList<TestStepResult> getStepSequence()
 	{
-		Trace.println(Trace.GETTER);
+		LOG.trace(Mark.GETTER, "");
 		return mySteps;
 	}
 
 	public void reset()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
     	mySteps = new ArrayList<TestStepResult>();
 	}
 }

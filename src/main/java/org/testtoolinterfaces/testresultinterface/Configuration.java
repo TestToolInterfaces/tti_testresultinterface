@@ -5,7 +5,9 @@ package org.testtoolinterfaces.testresultinterface;
 
 import java.io.File;
 
-import org.testtoolinterfaces.utils.Trace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testtoolinterfaces.utils.Mark;
 
 /**
  * @author Arjan Kranenburg
@@ -13,7 +15,9 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class Configuration
 {
-	private File myRunXslDir;
+    private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
+
+    private File myRunXslDir;
 	private File myGroupXslDir;
 	private File myCaseXslDir;
 
@@ -26,7 +30,8 @@ public class Configuration
 	                      File aGroupXslDir,
 	                      File aCaseXslDir )
 	{
-	    Trace.println(Trace.CONSTRUCTOR);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}, {}", 
+				aRunXslDir, aGroupXslDir, aCaseXslDir);
 
 	    myRunXslDir = aRunXslDir;
 	    myGroupXslDir = aGroupXslDir;

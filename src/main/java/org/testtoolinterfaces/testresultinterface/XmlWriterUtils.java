@@ -13,8 +13,10 @@ import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestResult;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 
 /**
  * @author Arjan
@@ -22,14 +24,17 @@ import org.testtoolinterfaces.utils.Trace;
  */
 public class XmlWriterUtils
 {
-	/**
+    private static final Logger LOG = LoggerFactory.getLogger(XmlWriterUtils.class);
+
+    /**
 	 * @param aStream
 	 * @param anXslRef
 	 * @throws IOException
 	 */
 	public static void printXmlDeclaration (OutputStreamWriter aStream, String aXslRef) throws IOException
 	{
-	    Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "{}, {}", aStream, aXslRef);
+
 		aStream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		aStream.write("<?xml-stylesheet type=\"text/xsl\" href=\"" + aXslRef + "\"?>\n\n");
 	}
@@ -44,9 +49,7 @@ public class XmlWriterUtils
 	 */
 	public static void printXmlLogFiles(Hashtable<String, String> aLogs, OutputStreamWriter aStream, String aBaseLogDir, String anIndent) throws IOException
 	{
-	    Trace.println( Trace.UTIL, "printXmlLogFiles( " + aLogs.size() + "logs, aStream, " 
-	                  									+ aBaseLogDir + ", "
-	                  									+ anIndent + ")", true );
+		LOG.trace(Mark.UTIL, "{}, {}, {}, {}", aLogs, aStream, aBaseLogDir, anIndent);
 
       	if (!aLogs.isEmpty())
       	{
@@ -93,7 +96,7 @@ public class XmlWriterUtils
 	 */
 	public static void printXmlComment(TestResult aTestResult, OutputStreamWriter aStream, String anIndent) throws IOException
 	{
-	    Trace.println(Trace.UTIL);
+		LOG.trace(Mark.UTIL, "{}, {}, {}", aTestResult, aStream, anIndent);
 		String comment = aTestResult.getComment();
 	    if ( !comment.isEmpty() )
 	    {
@@ -105,60 +108,51 @@ public class XmlWriterUtils
 
 	public static void printXmlRequirement(OutputStreamWriter aStream, String aRequirementId, String anIndent) throws IOException
 	{
-	    Trace.println(Trace.UTIL);
-    	aStream.write(anIndent + "<requirementId>");
+		LOG.trace(Mark.UTIL, "{}, {}, {}", aStream, aRequirementId, anIndent);
+
+		aStream.write(anIndent + "<requirementId>");
     	aStream.write(aRequirementId);
     	aStream.write("</requirementId>\n");
 	}
 	
 	public static void copyXsl(File aSourceDir, File aTargetLogDir)
 	{
-	    Trace.println(Trace.UTIL, "copyXsl( " + aTargetLogDir.getName() + " )", true);
-		if ( aSourceDir == null )
-		{
+		LOG.trace(Mark.UTIL, "{}, {}", aSourceDir, aTargetLogDir);
+
+		if (aSourceDir == null) {
 			return;
 		}
-		
-        File[] files = aSourceDir.listFiles();
-        for (int i=0; i<files.length; i++)
-        {
-        	File srcFile = files[i];
-        	if (!srcFile.isDirectory())
-        	{
-            	File tgtFile = new File(aTargetLogDir + File.separator + srcFile.getName());
 
-            	FileChannel inChannel = null;
-            	FileChannel outChannel = null;
-            	try
-            	{
-            		inChannel = new FileInputStream(srcFile).getChannel();
-            		outChannel = new FileOutputStream(tgtFile).getChannel();
-                	inChannel.transferTo(0, inChannel.size(), outChannel);
-                } 
-                catch (IOException e)
-                {
-                	throw new IOError( e );
-                }
-                finally
-                {
-	                if (inChannel != null) try
-					{
-						inChannel.close();
-					}
-					catch (IOException exc)
-					{
-	                	throw new IOError( exc );
-					}
-	                if (outChannel != null) try
-					{
-						outChannel.close();
-					}
-					catch (IOException exc)
-					{
-	                	throw new IOError( exc );
-					}
-	            }
-        	}
-        }
+		File[] files = aSourceDir.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			File srcFile = files[i];
+			if (!srcFile.isDirectory()) {
+				File tgtFile = new File(aTargetLogDir + File.separator
+						+ srcFile.getName());
+
+				FileChannel inChannel = null;
+				FileChannel outChannel = null;
+				try {
+					inChannel = new FileInputStream(srcFile).getChannel();
+					outChannel = new FileOutputStream(tgtFile).getChannel();
+					inChannel.transferTo(0, inChannel.size(), outChannel);
+				} catch (IOException e) {
+					throw new IOError(e);
+				} finally {
+					if (inChannel != null)
+						try {
+							inChannel.close();
+						} catch (IOException exc) {
+							throw new IOError(exc);
+						}
+					if (outChannel != null)
+						try {
+							outChannel.close();
+						} catch (IOException exc) {
+							throw new IOError(exc);
+						}
+				}
+			}
+		}
 	}
 }

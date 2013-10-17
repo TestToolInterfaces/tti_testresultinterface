@@ -4,13 +4,10 @@
 package org.testtoolinterfaces.testresultinterface;
 
 import java.io.File;
-import java.util.Hashtable;
 
 import org.testtoolinterfaces.testresult.TestCaseResult;
-import org.testtoolinterfaces.testresult.TestStepResultBase;
 import org.testtoolinterfaces.testsuite.LooseTestInterfaceList;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.utils.Trace;
 
 /**
  * @author Arjan
@@ -26,7 +23,6 @@ public class TCResultPrinter
 	 */
 	public static void main(String[] args)
 	{
-		Trace.getInstance().addBaseClass("org.testtoolinterfaces");
 		System.out.println( "Starting Pretty printing for:" );
 
 		String requestedFileName = args[0];
@@ -48,7 +44,7 @@ public class TCResultPrinter
 		System.out.println( aTcResult.getDescription() );
 		System.out.println( "Sequence Number: " + aTcResult.getSequenceNr() );
 		System.out.println( "=================== Preparation =====================" );
-		Hashtable<Integer,TestStepResultBase> prepResults = aTcResult.getPrepareResults();
+//		Hashtable<Integer,TestStepResultBase> prepResults = aTcResult.getPrepareResults();
 		System.out.println( "=================== Execution =======================" );
 		System.out.println( "=================== Cleanup =========================" );
 		System.out.println( "=====================================================" );

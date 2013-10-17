@@ -5,16 +5,18 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.ParameterResult;
-import org.testtoolinterfaces.testresult.TestResult;
+import org.testtoolinterfaces.testresult.SingleResult.VERDICT;
 import org.testtoolinterfaces.testresult.TestStepResult;
 import org.testtoolinterfaces.testresult.impl.TestStepCommandResultImpl;
 import org.testtoolinterfaces.testsuite.ParameterArrayList;
 import org.testtoolinterfaces.testsuite.TestInterface;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.testsuite.TestStepCommand;
+import org.testtoolinterfaces.testsuite.impl.TestStepCommand;
 import org.testtoolinterfaces.utils.GenericTagAndStringXmlHandler;
-import org.testtoolinterfaces.utils.Trace;
+import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
@@ -36,7 +38,9 @@ import org.xml.sax.XMLReader;
  */
 public class ActionTypeResultXmlHandler extends XmlHandler
 {
-	public static final String PARAM_SEQUENCE = "sequence";
+    private static final Logger LOG = LoggerFactory.getLogger(ActionTypeResultXmlHandler.class);
+
+    public static final String PARAM_SEQUENCE = "sequence";
 	public static final String PARAM_INTERFACE = "interface";
 
 	private static final String COMMAND_ELEMENT = "command";
@@ -64,7 +68,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	private String myDescription;
 	private String myDisplayName;
 	private String myComment;
-	private TestResult.VERDICT myResult;
+	private VERDICT myResult;
 	private ParameterArrayList myParameters;
 	private ArrayList<ParameterResult> myParameterResults;
 	private Hashtable<String, String> myLogFiles = new Hashtable<String, String>();
@@ -73,7 +77,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	public ActionTypeResultXmlHandler( XMLReader anXmlReader, String aTag, TestInterfaceList anInterfaceList )
 	{
 		super(anXmlReader, aTag);
-		Trace.println(Trace.CONSTRUCTOR, "ActionTypeResultXmlHandler( anXmlreader, " + aTag + " )", true);
+		LOG.trace(Mark.CONSTRUCTOR, "{}, {}", anXmlReader, aTag, anInterfaceList);
 
 		myInterfaceList = anInterfaceList;
 
@@ -105,8 +109,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
     public void processElementAttributes(String aQualifiedName, Attributes att)
     {
-		Trace.println(Trace.SUITE, "processElementAttributes( "
-				+ aQualifiedName + " )", true );
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, att);
     	if (aQualifiedName.equalsIgnoreCase(this.getStartElement()))
     	{
 		    for (int i = 0; i < att.getLength(); i++)
@@ -114,13 +117,13 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		    	if (att.getQName(i).equalsIgnoreCase(PARAM_SEQUENCE))
 		    	{
 		    		mySequence = Integer.valueOf( att.getValue(i) ).intValue();
-		    		Trace.println( Trace.ALL, "        mySequence -> " + mySequence);
+		    		LOG.trace(Mark.SUITE, "mySequence -> {}", mySequence);
     	    	}
 		    	else if (att.getQName(i).equalsIgnoreCase(PARAM_INTERFACE))
 		    	{
 		    		String interfaceName = att.getValue(i);
 		    		myInterface = myInterfaceList.getInterface(interfaceName);
-		    		Trace.println( Trace.ALL, "        myInterface -> " + myInterface.getInterfaceName());
+		    		LOG.trace(Mark.SUITE, "myInterface -> {}", myInterface);
     	    	}
 		    }
     	}
@@ -159,7 +162,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 	@Override
 	public void handleReturnFromChildElement(String aQualifiedName, XmlHandler aChildXmlHandler)
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "{}, {}", aQualifiedName, aChildXmlHandler);
     	if (aQualifiedName.equalsIgnoreCase(COMMAND_ELEMENT))
     	{
     		myCommand = myCommandXmlHandler.getValue();
@@ -177,7 +180,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
     	}
     	else if (aQualifiedName.equalsIgnoreCase(RESULT_ELEMENT))
     	{
-    		myResult = TestResult.VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
+    		myResult = VERDICT.valueOf( myResultXmlHandler.getValue().toUpperCase() );
     		myResultXmlHandler.reset();
     	}
     	else if (aQualifiedName.equalsIgnoreCase(COMMENT_ELEMENT))
@@ -206,7 +209,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
 	public TestStepResult getActionStep()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 		TestStepCommand testStep = new TestStepCommand( mySequence,
 												 myDescription,
 		                                         myCommand,
@@ -236,7 +239,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 
 	public void reset()
 	{
-		Trace.println(Trace.SUITE);
+		LOG.trace(Mark.SUITE, "");
 		myCommand = "";
 		mySequence = 0;
 		myInterface = myInterfaceList.getInterface( "Unknown" );
@@ -244,7 +247,7 @@ public class ActionTypeResultXmlHandler extends XmlHandler
 		myDescription = "";
 		myDisplayName = "";
 		myComment = "";
-		myResult = TestResult.UNKNOWN;
+		myResult = VERDICT.UNKNOWN;
 		myParameters = new ParameterArrayList();
 		myParameterResults = new ArrayList<ParameterResult>();
 
