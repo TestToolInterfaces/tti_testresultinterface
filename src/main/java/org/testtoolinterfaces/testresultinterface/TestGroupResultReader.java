@@ -7,14 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.testtoolinterfaces.testresult.TestGroupResult;
 import org.testtoolinterfaces.testresult.TestGroupResultLink;
 import org.testtoolinterfaces.testsuite.TestInterfaceList;
-import org.testtoolinterfaces.testsuite.impl.TestCaseImpl;
 import org.testtoolinterfaces.utils.Mark;
 import org.testtoolinterfaces.utils.XmlHandler;
 import org.xml.sax.XMLReader;
 
 public class TestGroupResultReader
 {
-    private static final Logger LOG = LoggerFactory.getLogger(TestCaseImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestGroupResultReader.class);
 
     private TestInterfaceList myInterfaceList;
 	/**
